@@ -78,14 +78,20 @@ export const calculateMemberBalances = (expenses: Expense[], members: string[]):
 };
 
 export const getTotalExpenses = (expenses: Expense[]): number => {
-  return expenses.reduce((sum, e) => sum + e.amount, 0);
+  // Exclude settlements from total expenses
+  return expenses
+    .filter(e => e.type !== 'settlement')
+    .reduce((sum, e) => sum + e.amount, 0);
 };
 
 export const getMemberShare = (expenses: Expense[], member: string): number => {
-  return expenses.reduce((sum, e) => {
-    if (e.splitAmong.includes(member)) {
-      return sum + (e.amount / e.splitAmong.length);
-    }
-    return sum;
-  }, 0);
+  // Exclude settlements from member share calculation
+  return expenses
+    .filter(e => e.type !== 'settlement')
+    .reduce((sum, e) => {
+      if (e.splitAmong.includes(member)) {
+        return sum + (e.amount / e.splitAmong.length);
+      }
+      return sum;
+    }, 0);
 };
