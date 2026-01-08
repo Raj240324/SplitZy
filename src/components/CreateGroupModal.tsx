@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Group } from '@/types';
-import { saveGroup, generateId } from '@/utils/storage';
+import { saveGroup, generateId, generateShareCode } from '@/utils/storage';
 
 interface CreateGroupModalProps {
   open: boolean;
@@ -41,7 +41,8 @@ const CreateGroupModal = ({ open, onClose, onCreated }: CreateGroupModalProps) =
       name: name.trim(),
       members: memberNames,
       expenses: [],
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      shareCode: generateShareCode()
     };
 
     saveGroup(group);

@@ -4,6 +4,7 @@ export interface Group {
   members: string[];
   expenses: Expense[];
   createdAt: number;
+  shareCode: string;
 }
 
 export interface Expense {
@@ -14,6 +15,9 @@ export interface Expense {
   splitAmong: string[];
   category: 'groceries' | 'transport' | 'lodging' | 'dining' | 'other';
   createdAt: number;
+  notes?: string;
+  type?: 'expense' | 'settlement';
+  settledWith?: string;
 }
 
 export interface MemberBalance {

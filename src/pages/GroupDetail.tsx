@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Plus, CheckCircle, Trash2, X } from 'lucide-react';
+import { ChevronRight, Plus, CheckCircle, Trash2, X, Share2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Group, Expense } from '@/types';
-import { getGroupById, saveGroup, deleteGroup } from '@/utils/storage';
+import { getGroupById, saveGroup, deleteGroup, generateId } from '@/utils/storage';
 import { getTotalExpenses, getMemberShare, calculateMemberBalances, formatCurrency } from '@/utils/calculations';
 import MemberAvatar from '@/components/MemberAvatar';
 import ExpenseTable from '@/components/ExpenseTable';
 import BalanceView from '@/components/BalanceView';
 import AddExpenseModal from '@/components/AddExpenseModal';
 import EditExpenseModal from '@/components/EditExpenseModal';
+import ShareGroupModal from '@/components/ShareGroupModal';
+import SettleUpModal from '@/components/SettleUpModal';
 import { useToast } from '@/hooks/use-toast';
+import { exportToCSV, getCurrencySymbol } from '@/utils/export';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +36,8 @@ const GroupDetail = () => {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [activeTab, setActiveTab] = useState('expenses');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showSettleModal, setShowSettleModal] = useState(false);
   
   // Settings state
   const [editedName, setEditedName] = useState('');
@@ -90,6 +95,40 @@ const GroupDetail = () => {
     if (!group) return;
     deleteGroup(group.id);
     navigate('/dashboard');
+  };
+
+  const handleSettlement = (settlement: { from: string; to: string; amount: number }) => {
+    if (!group) return;
+    
+    // Create a settlement expense
+    const settlementExpense: Expense = {
+      id: generateId(),
+      title: `Settlement: ${settlement.from} → ${settlement.to}`,
+      amount: settlement.amount,
+      paidBy: settlement.from,
+      splitAmong: [settlement.to],
+      category: 'other',
+      createdAt: Date.now(),
+      type: 'settlement',
+      settledWith: settlement.to
+    };
+    
+    const updatedGroup = {
+      ...group,
+      expenses: [...group.expenses, settlementExpense]
+    };
+    
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+  };
+
+  const handleExportCSV = () => {
+    if (!group) return;
+    exportToCSV(group, getCurrencySymbol);
+    toast({
+      title: 'Exported',
+      description: 'Expenses exported to CSV file',
+    });
   };
 
   // Settings handlers
@@ -243,14 +282,22 @@ const GroupDetail = () => {
               )}
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Button onClick={() => setShowAddExpense(true)} className="gap-2">
               <Plus className="w-4 h-4" />
               Add Expense
             </Button>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => setShowSettleModal(true)}>
               <CheckCircle className="w-4 h-4" />
               Settle Up
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={() => setShowShareModal(true)}>
+              <Share2 className="w-4 h-4" />
+              Share
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={handleExportCSV}>
+              <Download className="w-4 h-4" />
+              Export
             </Button>
           </div>
         </div>
@@ -418,6 +465,21 @@ const GroupDetail = () => {
         expense={editingExpense}
         members={group.members}
         onSave={handleEditExpense}
+      />
+      
+      <ShareGroupModal
+        open={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        groupName={group.name}
+        shareCode={group.shareCode}
+      />
+      
+      <SettleUpModal
+        open={showSettleModal}
+        onClose={() => setShowSettleModal(false)}
+        balances={balances}
+        onSettle={handleSettlement}
+        getCurrencySymbol={getCurrencySymbol}
       />
     </div>
   );

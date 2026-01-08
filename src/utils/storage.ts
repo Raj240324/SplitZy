@@ -5,7 +5,12 @@ const STORAGE_KEY = 'splitzy_groups';
 export const getGroups = (): Group[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    const groups = data ? JSON.parse(data) : [];
+    // Migrate old groups without shareCode
+    return groups.map((g: Group) => ({
+      ...g,
+      shareCode: g.shareCode || generateShareCode()
+    }));
   } catch {
     return [];
   }
@@ -18,6 +23,11 @@ export const saveGroups = (groups: Group[]): void => {
 export const getGroupById = (id: string): Group | undefined => {
   const groups = getGroups();
   return groups.find(g => g.id === id);
+};
+
+export const getGroupByShareCode = (shareCode: string): Group | undefined => {
+  const groups = getGroups();
+  return groups.find(g => g.shareCode.toUpperCase() === shareCode.toUpperCase());
 };
 
 export const saveGroup = (group: Group): void => {
@@ -38,4 +48,13 @@ export const deleteGroup = (id: string): void => {
 
 export const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
+
+export const generateShareCode = (): string => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
 };
