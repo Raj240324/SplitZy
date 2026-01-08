@@ -10,6 +10,7 @@ import MemberAvatar from '@/components/MemberAvatar';
 import ExpenseTable from '@/components/ExpenseTable';
 import BalanceView from '@/components/BalanceView';
 import AddExpenseModal from '@/components/AddExpenseModal';
+import EditExpenseModal from '@/components/EditExpenseModal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,7 @@ const GroupDetail = () => {
   const navigate = useNavigate();
   const [group, setGroup] = useState<Group | null>(null);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [activeTab, setActiveTab] = useState('expenses');
 
   useEffect(() => {
@@ -46,6 +48,30 @@ const GroupDetail = () => {
     const updatedGroup = {
       ...group,
       expenses: [...group.expenses, expense]
+    };
+    
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+  };
+
+  const handleEditExpense = (expense: Expense) => {
+    if (!group) return;
+    
+    const updatedGroup = {
+      ...group,
+      expenses: group.expenses.map(e => e.id === expense.id ? expense : e)
+    };
+    
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+  };
+
+  const handleDeleteExpense = (expenseId: string) => {
+    if (!group) return;
+    
+    const updatedGroup = {
+      ...group,
+      expenses: group.expenses.filter(e => e.id !== expenseId)
     };
     
     saveGroup(updatedGroup);
@@ -166,7 +192,12 @@ const GroupDetail = () => {
           </TabsList>
 
           <TabsContent value="expenses">
-            <ExpenseTable expenses={group.expenses} members={group.members} />
+            <ExpenseTable 
+              expenses={group.expenses} 
+              members={group.members} 
+              onEdit={setEditingExpense}
+              onDelete={handleDeleteExpense}
+            />
           </TabsContent>
 
           <TabsContent value="balances">
@@ -222,6 +253,14 @@ const GroupDetail = () => {
         onClose={() => setShowAddExpense(false)}
         members={group.members}
         onSave={handleAddExpense}
+      />
+
+      <EditExpenseModal
+        open={!!editingExpense}
+        onClose={() => setEditingExpense(null)}
+        expense={editingExpense}
+        members={group.members}
+        onSave={handleEditExpense}
       />
     </div>
   );
