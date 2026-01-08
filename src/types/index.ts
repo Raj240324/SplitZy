@@ -1,10 +1,12 @@
 export interface Group {
   id: string;
   name: string;
+  currency?: string;
   members: string[];
   expenses: Expense[];
   createdAt: number;
   shareCode: string;
+  activities?: Activity[];
 }
 
 export interface Expense {
@@ -27,4 +29,12 @@ export interface MemberBalance {
   netBalance: number;
   owesTo: { member: string; amount: number }[];
   getsFrom: { member: string; amount: number }[];
+}
+
+export interface Activity {
+  id: string;
+  type: 'expense_added' | 'expense_updated' | 'expense_deleted' | 'settlement' | 'member_added' | 'member_removed' | 'group_updated';
+  description: string;
+  timestamp: number;
+  byUser?: string;
 }

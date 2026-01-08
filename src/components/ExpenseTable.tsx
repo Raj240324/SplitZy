@@ -227,7 +227,68 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Mobile View: Cards */}
+        <div className="md:hidden divide-y divide-border">
+          {filteredExpenses.length === 0 ? (
+            <div className="px-4 py-12 text-center text-muted-foreground">
+              No expenses found
+            </div>
+          ) : (
+            filteredExpenses.map(expense => {
+              const Icon = categoryIcons[expense.category];
+              const colorClass = categoryColors[expense.category];
+              const yourShare = expense.splitAmong.includes(currentUser)
+                ? expense.amount / expense.splitAmong.length
+                : 0;
+
+              return (
+                <div key={expense.id} className="p-4 space-y-3 hover:bg-muted/30 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-base">{expense.title}</h4>
+                      <p className="text-xs text-muted-foreground">{formatDate(expense.createdAt)} • Paid by {expense.paidBy}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg">{formatCurrency(expense.amount)}</p>
+                      {yourShare > 0 && (
+                        <p className="text-[10px] text-muted-foreground">Your share: {formatCurrency(yourShare)}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium ${colorClass}`}>
+                      <Icon className="w-3 h-3" />
+                      {expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}
+                    </span>
+                    
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => onEdit?.(expense)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                        onClick={() => setDeleteExpense(expense)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop View: Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-muted/50">
               <tr>

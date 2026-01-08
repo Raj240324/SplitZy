@@ -3,29 +3,55 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Dashboard from "./pages/Dashboard";
-import GroupDetail from "./pages/GroupDetail";
-import Settings from "./pages/Settings";
-import NotFound from "./pages/NotFound";
+import { lazy, Suspense } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
+import { Button } from "@/components/ui/button";
+import Landing from "./pages/Landing"; // Static import for better LCP
+
+// Lazy load other pages
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const GroupDetail = lazy(() => import("./pages/GroupDetail"));
+const Settings = lazy(() => import("./pages/Settings"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const SignInPage = lazy(() => import("./pages/SignInPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 
 const queryClient = new QueryClient();
 
+import { ThemeProvider } from "@/components/theme-provider";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Settings as SettingsIcon } from "lucide-react";
+import { NavLink } from "./components/NavLink";
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-background">
+     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/group/:id" element={<GroupDetail />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/sign-in/*" element={<SignInPage />} />
+              <Route path="/sign-up/*" element={<SignUpPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </TooltipProvider>
       </BrowserRouter>
-    </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

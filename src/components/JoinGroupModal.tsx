@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 interface JoinGroupModalProps {
   open: boolean;
   onClose: () => void;
+  userId?: string;
 }
 
-const JoinGroupModal = ({ open, onClose }: JoinGroupModalProps) => {
+const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
   const [shareCode, setShareCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -35,7 +36,7 @@ const JoinGroupModal = ({ open, onClose }: JoinGroupModalProps) => {
     
     // Simulate a small delay for UX
     setTimeout(() => {
-      const group = getGroupByShareCode(code);
+      const group = getGroupByShareCode(code, userId);
       
       if (group) {
         toast({
@@ -61,6 +62,9 @@ const JoinGroupModal = ({ open, onClose }: JoinGroupModalProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Join a Group</DialogTitle>
+          <DialogDescription>
+            Enter a unique share code to join an existing squad.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

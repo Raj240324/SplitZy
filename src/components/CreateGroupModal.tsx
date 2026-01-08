@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Group } from '@/types';
 import { saveGroup, generateId, generateShareCode } from '@/utils/storage';
 
@@ -13,9 +13,10 @@ interface CreateGroupModalProps {
   open: boolean;
   onClose: () => void;
   onCreated: () => void;
+  userId?: string;
 }
 
-const CreateGroupModal = ({ open, onClose, onCreated }: CreateGroupModalProps) => {
+const CreateGroupModal = ({ open, onClose, onCreated, userId }: CreateGroupModalProps) => {
   const [name, setName] = useState('');
   const [membersText, setMembersText] = useState('');
   const [includeYou, setIncludeYou] = useState(true);
@@ -45,7 +46,7 @@ const CreateGroupModal = ({ open, onClose, onCreated }: CreateGroupModalProps) =
       shareCode: generateShareCode()
     };
 
-    saveGroup(group);
+    saveGroup(group, userId);
     onCreated();
     handleClose();
   };
@@ -62,6 +63,9 @@ const CreateGroupModal = ({ open, onClose, onCreated }: CreateGroupModalProps) =
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl">Create New Group</DialogTitle>
+          <DialogDescription>
+            Enter the details for your new squad or trip to start splitting bills.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">

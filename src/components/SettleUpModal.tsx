@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { MemberBalance } from '@/types';
 import { Check, ArrowRight } from 'lucide-react';
@@ -80,6 +80,9 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol }:
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Settle Up</DialogTitle>
+          <DialogDescription>
+            Record payments to balance the squad's books.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,6 +58,9 @@ const EditExpenseModal = ({ open, onClose, expense, members, onSave }: EditExpen
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Expense</DialogTitle>
+          <DialogDescription>
+            Update the details of this expense to keep your group balances accurate.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

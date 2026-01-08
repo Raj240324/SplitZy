@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Header } from '@/components/Header';
+import { useUser } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -7,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Download, Upload, Trash2, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Download, Upload, Trash2, Moon, Sun, Plus, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getGroups, saveGroups } from '@/utils/storage';
+import { useTheme } from '@/components/theme-provider';
 
 const currencies = [
   { value: 'INR', label: '₹ Indian Rupee (INR)', symbol: '₹' },
@@ -24,32 +27,19 @@ const currencies = [
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
   const [currency, setCurrency] = useState('INR');
 
   useEffect(() => {
-    // Load settings from localStorage
-    const savedTheme = localStorage.getItem('splitzy_theme');
+    // Load currency from localStorage
     const savedCurrency = localStorage.getItem('splitzy_currency');
-    
-    if (savedTheme === 'dark') {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    }
     if (savedCurrency) {
       setCurrency(savedCurrency);
     }
   }, []);
 
   const handleThemeChange = (checked: boolean) => {
-    setIsDarkMode(checked);
-    if (checked) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('splitzy_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('splitzy_theme', 'light');
-    }
+    setTheme(checked ? 'dark' : 'light');
     toast({
       title: 'Theme updated',
       description: `Switched to ${checked ? 'dark' : 'light'} mode`,
@@ -68,7 +58,7 @@ const Settings = () => {
   const handleExportData = () => {
     const groups = getGroups();
     const settings = {
-      theme: isDarkMode ? 'dark' : 'light',
+      theme: theme === 'dark' ? 'dark' : 'light',
       currency
     };
     const exportData = { groups, settings, exportedAt: new Date().toISOString() };
@@ -106,7 +96,7 @@ const Settings = () => {
           }
           if (data.settings) {
             if (data.settings.theme) {
-              handleThemeChange(data.settings.theme === 'dark');
+              setTheme(data.settings.theme);
             }
             if (data.settings.currency) {
               handleCurrencyChange(data.settings.currency);
@@ -119,7 +109,7 @@ const Settings = () => {
         } catch {
           toast({
             title: 'Import failed',
-            description: 'Invalid file format. Please select a valid Splitzy backup file.',
+            description: 'Invalid file format. Please select a valid SplitZy backup file.',
             variant: 'destructive',
           });
         }
@@ -129,99 +119,120 @@ const Settings = () => {
     input.click();
   };
 
+  const { user } = useUser();
+  const location = useLocation();
+  const isDemo = location.state?.demo === true;
+  const userId = isDemo ? 'demo_guest' : user?.id;
+
+  // ... (existing code for theme/currency)
+
   const handleClearData = () => {
-    localStorage.removeItem('splitzy_groups');
-    toast({
-      title: 'Data cleared',
-      description: 'All your groups and expenses have been deleted',
-    });
-    navigate('/dashboard');
+    if (userId) {
+      saveGroups([], userId);
+      toast({
+        title: 'Data cleared',
+        description: 'All your groups and expenses have been deleted',
+      });
+      navigate('/dashboard', { state: { demo: isDemo } });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-xl font-bold">Settings</h1>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
+    <div className="min-h-screen bg-background pt-24 pb-20">
+      <Header />
+      <div className="container mx-auto max-w-2xl px-4 space-y-6">
         {/* Appearance */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              {isDarkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               Appearance
             </CardTitle>
-            <CardDescription>Customize how Splitzy looks</CardDescription>
+            <CardDescription>
+              Customize how SplitZy looks on your device.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="dark-mode">Dark Mode</Label>
-                <p className="text-sm text-muted-foreground">Toggle dark theme</p>
+                <p className="font-medium">Dark Mode</p>
+                <p className="text-sm text-muted-foreground">
+                  Switch between light and dark themes.
+                </p>
               </div>
-              <Switch
-                id="dark-mode"
-                checked={isDarkMode}
-                onCheckedChange={handleThemeChange}
+              <Switch 
+                checked={theme === 'dark'} 
+                onCheckedChange={(checked) => {
+                  setTheme(checked ? 'dark' : 'light');
+                  toast({
+                    title: 'Theme updated',
+                    description: `Switched to ${checked ? 'dark' : 'light'} mode`,
+                  });
+                }} 
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Currency */}
+        {/* Preferences */}
         <Card>
           <CardHeader>
-            <CardTitle>Currency</CardTitle>
-            <CardDescription>Set your preferred currency for expenses</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Preferences
+            </CardTitle>
+            <CardDescription>
+              Set your default currency and other app settings.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Select value={currency} onValueChange={handleCurrencyChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {currencies.map(curr => (
-                  <SelectItem key={curr.value} value={curr.value}>
-                    {curr.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Default Currency</label>
+              <Select value={currency} onValueChange={setCurrency}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map((curr) => (
+                    <SelectItem key={curr.value} value={curr.value}>
+                      {curr.symbol} {curr.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 
         {/* Data Management */}
         <Card>
           <CardHeader>
-            <CardTitle>Data Management</CardTitle>
-            <CardDescription>Export, import, or clear your data</CardDescription>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="w-5 h-5" />
+              Data Management
+            </CardTitle>
+            <CardDescription>
+              Backup or clear your local application data.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button variant="outline" onClick={handleExportData} className="flex-1">
-                <Download className="w-4 h-4 mr-2" />
-                Export Data
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" onClick={handleExportData} className="gap-2">
+                <Download className="w-4 h-4" />
+                Backup Data
               </Button>
-              <Button variant="outline" onClick={handleImportData} className="flex-1">
-                <Upload className="w-4 h-4 mr-2" />
+              <label className="flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors text-sm font-medium">
+                <Upload className="w-4 h-4" />
                 Import Data
-              </Button>
+                <input type="file" className="hidden" accept=".json" onChange={handleImportData} />
+              </label>
             </div>
             
-            <Separator />
-            
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-destructive">Danger Zone</h4>
+            <div className="pt-4 border-t border-border">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="w-full">
-                    <Trash2 className="w-4 h-4 mr-2" />
+                  <Button variant="destructive" className="w-full gap-2">
+                    <Trash2 className="w-4 h-4" />
                     Clear All Data
                   </Button>
                 </AlertDialogTrigger>
@@ -229,13 +240,13 @@ const Settings = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete all your groups and expenses.
+                      This will permanently delete all your groups, expenses, and settings from this device. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleClearData}>
-                      Yes, clear all data
+                    <AlertDialogAction onClick={handleClearData} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Clear Everything
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -247,15 +258,23 @@ const Settings = () => {
         {/* About */}
         <Card>
           <CardHeader>
-            <CardTitle>About</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Info className="w-5 h-5" />
+              About SplitZy
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground space-y-1">
-            <p><strong>Splitzy Lite</strong> v1.0.0</p>
+          <CardContent className="text-sm text-muted-foreground space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1">
+                <img src="/logo.png" alt="SplitZy" width="16" height="16" className="w-4 h-4" />
+                <span className="font-bold text-foreground">SplitZy</span>
+              </span>
+              <span className="ml-2 text-[10px] opacity-50 font-mono">v1.2.0</span>
+            </div>
             <p>A simple expense splitting app for groups</p>
-            <p className="pt-2">Made with ❤️ using Lovable</p>
           </CardContent>
         </Card>
-      </main>
+      </div>
     </div>
   );
 };

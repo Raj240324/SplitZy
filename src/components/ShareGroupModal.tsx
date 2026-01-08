@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
@@ -34,7 +34,7 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
   };
 
   const handleShareMessage = async () => {
-    const message = `Join my expense group "${groupName}" on Splitzy!\n\nShare code: ${shareCode}`;
+    const message = `Join my expense group "${groupName}" on SplitZy!\n\nShare code: ${shareCode}`;
     
     if (navigator.share) {
       try {
@@ -56,6 +56,9 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share Group</DialogTitle>
+          <DialogDescription>
+            Invite others to join "{groupName}" to start splitting expenses together.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">

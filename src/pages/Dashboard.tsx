@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Settings, Users, Search } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
+import { Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Group } from '@/types';
 import { getGroups } from '@/utils/storage';
-import { getTotalExpenses, calculateMemberBalances } from '@/utils/calculations';
-import { formatCurrency } from '@/utils/calculations';
+import { getTotalExpenses, calculateMemberBalances, formatCurrency } from '@/utils/calculations';
 import CreateGroupModal from '@/components/CreateGroupModal';
 import JoinGroupModal from '@/components/JoinGroupModal';
 import { getCurrencySymbol } from '@/utils/export';
+import { Header } from '@/components/Header';
 
 const groupColors = [
   'from-violet-500 to-purple-600',
@@ -22,6 +23,9 @@ const groupColors = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const userId = user?.id;
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -29,11 +33,18 @@ const Dashboard = () => {
   const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
-    setGroups(getGroups());
-  }, []);
+    if (userId) {
+      setGroups(getGroups(userId));
+    } else {
+      setGroups([]);
+    }
+  }, [userId]);
+
 
   const refreshGroups = () => {
-    setGroups(getGroups());
+    if (userId) {
+      setGroups(getGroups(userId));
+    }
   };
 
   const getBalanceStatus = (group: Group, currentUser: string = 'You') => {
@@ -52,142 +63,137 @@ const Dashboard = () => {
     
     return { type: 'negative', text: `You owe ${formatCurrency(Math.abs(userBalance.netBalance))}` };
   };
+  const filteredGroups = groups.filter(g => 
+    g.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div 
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate('/')}
-          >
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">S</span>
+    <div className="min-h-screen bg-background pt-24 pb-12">
+      <Header />
+      <div className="container mx-auto max-w-6xl px-4">
+        {/* Main Content */}
+        <div className="py-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">Your Groups</h1>
+              <p className="text-muted-foreground">Manage your shared expenses with friends and family</p>
             </div>
-            <span className="font-semibold text-lg">Splitzy Lite</span>
+            <div className="flex gap-3">
+              <Button onClick={() => setShowJoinModal(true)} variant="outline">
+                Join Group
+              </Button>
+              <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+                <Plus className="w-4 h-4" />
+                New Group
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowJoinModal(true)}>
-              <Users className="w-4 h-4" />
-              Join Group
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
-              <Settings className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Your Groups</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs bg-muted px-2 py-1 rounded-full text-muted-foreground">
-                Data saved locally
-              </span>
-            </div>
+          <div className="relative mb-8">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search groups..."
+              className="pl-10 h-12 bg-card border-border/50 focus:border-primary/50 transition-colors"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search groups..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-[200px]"
-              />
-            </div>
-            <Button onClick={() => setShowCreateModal(true)} className="gap-2">
-              <Plus className="w-4 h-4" />
-              New Group
-            </Button>
-          </div>
-        </div>
 
-        {/* Groups Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {groups
-            .filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()))
-            .map((group, index) => {
-            const total = getTotalExpenses(group.expenses);
-            const status = getBalanceStatus(group);
-            const colorClass = groupColors[index % groupColors.length];
-            
-            return (
-              <div
-                key={group.id}
-                onClick={() => navigate(`/group/${group.id}`)}
-                className="group cursor-pointer bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-lg transition-all"
-              >
-                <div className={`h-24 bg-gradient-to-br ${colorClass} relative`}>
-                  <div className="absolute inset-0 bg-black/20" />
-                  <div className="absolute bottom-3 left-4">
-                    <h3 className="text-white font-semibold text-lg drop-shadow-md">
-                      {group.name}
-                    </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGroups.map((group, index) => {
+              const balances = calculateMemberBalances(group.expenses, group.members);
+              const totalExpenses = getTotalExpenses(group.expenses);
+              const userBalance = balances.find(b => b.member === 'You');
+              const color = groupColors[index % groupColors.length];
+
+              return (
+                <div
+                  key={group.id}
+                  onClick={() => navigate(`/group/${group.id}`)}
+                  className="group cursor-pointer bg-card rounded-2xl border border-border/50 hover:border-primary/50 hover:shadow-xl transition-all duration-300 overflow-hidden"
+                >
+                  <div className={`h-2 bg-gradient-to-r ${color}`} />
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <Users className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Total spent</p>
+                        <p className="text-lg font-bold">{formatCurrency(totalExpenses)}</p>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">{group.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-6">{group.members.length} members</p>
+
+                    <div className="pt-4 border-t border-border/50 flex justify-between items-center">
+                      <div className="flex -space-x-2">
+                        {group.members.slice(0, 3).map((member, i) => (
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
+                            {member[0]}
+                          </div>
+                        ))}
+                        {group.members.length > 3 && (
+                          <div className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
+                            +{group.members.length - 3}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {userBalance && Math.abs(userBalance.netBalance) > 0.01 ? (
+                        <div className={`text-sm font-bold ${userBalance.netBalance > 0 ? 'text-balance-positive' : 'text-balance-negative'}`}>
+                          {userBalance.netBalance > 0 ? 'Gets' : 'Owes'} {formatCurrency(Math.abs(userBalance.netBalance))}
+                        </div>
+                      ) : (
+                        <div className="text-sm font-medium text-muted-foreground italic">Settled</div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-muted-foreground">
-                      {group.members.length} members
-                    </span>
-                    <span className="font-semibold">{formatCurrency(total)}</span>
-                  </div>
-                  <div className={`text-sm font-medium px-3 py-1.5 rounded-full inline-block ${
-                    status.type === 'positive' 
-                      ? 'bg-balance-positive text-balance-positive' 
-                      : status.type === 'negative'
-                      ? 'bg-balance-negative text-balance-negative'
-                      : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {status.text}
-                  </div>
-                </div>
+              );
+            })}
+
+            {/* Create New Group Card */}
+            <div
+              onClick={() => setShowCreateModal(true)}
+              className="cursor-pointer bg-card rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center min-h-[200px] gap-3"
+            >
+              <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+                <Plus className="w-7 h-7 text-muted-foreground" />
               </div>
-            );
-          })}
-
-          {/* Create New Group Card */}
-          <div
-            onClick={() => setShowCreateModal(true)}
-            className="cursor-pointer bg-card rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center min-h-[200px] gap-3"
-          >
-            <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-              <Plus className="w-7 h-7 text-muted-foreground" />
+              <span className="text-muted-foreground font-medium">Create another group</span>
             </div>
-            <span className="text-muted-foreground font-medium">Create another group</span>
           </div>
+
+          {groups.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-10 h-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No groups yet</h3>
+              <p className="text-muted-foreground mb-6">Create your first group to start splitting expenses</p>
+              <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+                <Plus className="w-4 h-4" />
+                Create Group
+              </Button>
+            </div>
+          )}
         </div>
 
-        {groups.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="w-10 h-10 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No groups yet</h3>
-            <p className="text-muted-foreground mb-6">Create your first group to start splitting expenses</p>
-            <Button onClick={() => setShowCreateModal(true)} className="gap-2">
-              <Plus className="w-4 h-4" />
-              Create Group
-            </Button>
-          </div>
-        )}
-      </main>
-
-      <CreateGroupModal 
-        open={showCreateModal} 
-        onClose={() => setShowCreateModal(false)}
-        onCreated={refreshGroups}
-      />
-      
-      <JoinGroupModal
-        open={showJoinModal}
-        onClose={() => setShowJoinModal(false)}
-      />
+        <CreateGroupModal 
+          open={showCreateModal} 
+          onClose={() => setShowCreateModal(false)}
+          onCreated={refreshGroups}
+          userId={userId}
+        />
+        
+        <JoinGroupModal
+          open={showJoinModal}
+          onClose={() => setShowJoinModal(false)}
+          userId={userId}
+        />
+      </div>
     </div>
   );
 };

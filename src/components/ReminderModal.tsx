@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, Check, MessageCircle } from 'lucide-react';
@@ -24,7 +24,7 @@ Just a friendly reminder that you owe ${getCurrencySymbol()}${amount.toFixed(2)}
 
 Please settle up when you get a chance! 🙏
 
-- Sent via Splitzy`;
+- Sent via SplitZy`;
 
   const [message, setMessage] = useState(defaultMessage);
 
@@ -56,6 +56,9 @@ Please settle up when you get a chance! 🙏
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Send Reminder to {memberName}</DialogTitle>
+          <DialogDescription>
+            Send a friendly nudge to {memberName} about their outstanding balance in "{groupName}".
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
