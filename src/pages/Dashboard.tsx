@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Settings, Users } from 'lucide-react';
+import { Plus, Settings, Users, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Group } from '@/types';
 import { getGroups } from '@/utils/storage';
 import { getTotalExpenses, calculateMemberBalances } from '@/utils/calculations';
 import { formatCurrency } from '@/utils/calculations';
 import CreateGroupModal from '@/components/CreateGroupModal';
+import JoinGroupModal from '@/components/JoinGroupModal';
+import { getCurrencySymbol } from '@/utils/export';
 
 const groupColors = [
   'from-violet-500 to-purple-600',
@@ -21,6 +24,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<Group[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
     setGroups(getGroups());
@@ -62,11 +68,11 @@ const Dashboard = () => {
             <span className="font-semibold text-lg">Splitzy Lite</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowJoinModal(true)}>
               <Users className="w-4 h-4" />
               Join Group
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/settings')}>
               <Settings className="w-5 h-5" />
             </Button>
           </div>
@@ -75,7 +81,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">Your Groups</h1>
             <div className="flex items-center gap-2 mt-1">
@@ -84,15 +90,28 @@ const Dashboard = () => {
               </span>
             </div>
           </div>
-          <Button onClick={() => setShowCreateModal(true)} className="gap-2">
-            <Plus className="w-4 h-4" />
-            New Group
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search groups..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 w-[200px]"
+              />
+            </div>
+            <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+              <Plus className="w-4 h-4" />
+              New Group
+            </Button>
+          </div>
         </div>
 
         {/* Groups Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {groups.map((group, index) => {
+          {groups
+            .filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((group, index) => {
             const total = getTotalExpenses(group.expenses);
             const status = getBalanceStatus(group);
             const colorClass = groupColors[index % groupColors.length];
@@ -163,6 +182,11 @@ const Dashboard = () => {
         open={showCreateModal} 
         onClose={() => setShowCreateModal(false)}
         onCreated={refreshGroups}
+      />
+      
+      <JoinGroupModal
+        open={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
       />
     </div>
   );
