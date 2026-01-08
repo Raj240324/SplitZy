@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, ShoppingCart, Car, Home, Utensils, Package, Pencil, Trash2 } from 'lucide-react';
+import { Search, ShoppingCart, Car, Home, Utensils, Package, Pencil, Trash2, CalendarIcon, X } from 'lucide-react';
+import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,8 +13,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { Expense } from '@/types';
 import { formatCurrency } from '@/utils/calculations';
+import { cn } from '@/lib/utils';
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -39,14 +47,41 @@ const categoryColors = {
   other: 'bg-gray-100 text-gray-700'
 };
 
+const CATEGORIES = ['groceries', 'transport', 'lodging', 'dining', 'other'] as const;
+
 const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete }: ExpenseTableProps) => {
   const [search, setSearch] = useState('');
   const [deleteExpense, setDeleteExpense] = useState<Expense | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | 'all'>('all');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
-  const filteredExpenses = expenses.filter(e =>
-    e.title.toLowerCase().includes(search.toLowerCase()) ||
-    e.paidBy.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredExpenses = expenses.filter(expense => {
+    // Search filter
+    const matchesSearch = expense.title.toLowerCase().includes(search.toLowerCase()) ||
+      expense.paidBy.toLowerCase().includes(search.toLowerCase());
+    
+    // Category filter
+    const matchesCategory = selectedCategory === 'all' || expense.category === selectedCategory;
+    
+    // Date range filter
+    let matchesDate = true;
+    if (dateFrom || dateTo) {
+      const expenseDate = new Date(expense.createdAt);
+      if (dateFrom && dateTo) {
+        matchesDate = isWithinInterval(expenseDate, {
+          start: startOfDay(dateFrom),
+          end: endOfDay(dateTo),
+        });
+      } else if (dateFrom) {
+        matchesDate = expenseDate >= startOfDay(dateFrom);
+      } else if (dateTo) {
+        matchesDate = expenseDate <= endOfDay(dateTo);
+      }
+    }
+    
+    return matchesSearch && matchesCategory && matchesDate;
+  });
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString('en-IN', {
@@ -62,6 +97,15 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
     }
   };
 
+  const clearFilters = () => {
+    setSelectedCategory('all');
+    setDateFrom(undefined);
+    setDateTo(undefined);
+    setSearch('');
+  };
+
+  const hasActiveFilters = selectedCategory !== 'all' || dateFrom || dateTo || search;
+
   if (expenses.length === 0) {
     return (
       <div className="text-center py-12 bg-card rounded-xl border border-border">
@@ -75,8 +119,102 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
   return (
     <>
       <div className="bg-card rounded-xl border border-border overflow-hidden">
-        {/* Search */}
-        <div className="p-4 border-b border-border">
+        {/* Filters */}
+        <div className="p-4 border-b border-border space-y-3">
+          {/* Category Filter */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Category:</span>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedCategory('all')}
+                className="h-7 text-xs"
+              >
+                All
+              </Button>
+              {CATEGORIES.map((cat) => {
+                const Icon = categoryIcons[cat];
+                return (
+                  <Button
+                    key={cat}
+                    variant={selectedCategory === cat ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedCategory(cat)}
+                    className="h-7 text-xs gap-1"
+                  >
+                    <Icon className="w-3 h-3" />
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Date Range Filter */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Date Range:</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 justify-start text-left font-normal",
+                    !dateFrom && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateFrom ? format(dateFrom, "MMM d, yyyy") : "From"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={setDateFrom}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <span className="text-muted-foreground">→</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 justify-start text-left font-normal",
+                    !dateTo && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateTo ? format(dateTo, "MMM d, yyyy") : "To"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={setDateTo}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="h-8 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <X className="mr-1 h-3 w-3" />
+                Clear Filters
+              </Button>
+            )}
+          </div>
+
+          {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -103,53 +241,61 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredExpenses.map(expense => {
-                const Icon = categoryIcons[expense.category];
-                const colorClass = categoryColors[expense.category];
-                const yourShare = expense.splitAmong.includes(currentUser)
-                  ? expense.amount / expense.splitAmong.length
-                  : 0;
+              {filteredExpenses.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                    No expenses found
+                  </td>
+                </tr>
+              ) : (
+                filteredExpenses.map(expense => {
+                  const Icon = categoryIcons[expense.category];
+                  const colorClass = categoryColors[expense.category];
+                  const yourShare = expense.splitAmong.includes(currentUser)
+                    ? expense.amount / expense.splitAmong.length
+                    : 0;
 
-                return (
-                  <tr key={expense.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
-                      {formatDate(expense.createdAt)}
-                    </td>
-                    <td className="px-4 py-4 font-medium">{expense.title}</td>
-                    <td className="px-4 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${colorClass}`}>
-                        <Icon className="w-3 h-3" />
-                        {expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-sm">{expense.paidBy}</td>
-                    <td className="px-4 py-4 text-right font-semibold">{formatCurrency(expense.amount)}</td>
-                    <td className="px-4 py-4 text-right text-sm text-muted-foreground">
-                      {formatCurrency(yourShare)}
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onEdit?.(expense)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive"
-                          onClick={() => setDeleteExpense(expense)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={expense.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
+                        {formatDate(expense.createdAt)}
+                      </td>
+                      <td className="px-4 py-4 font-medium">{expense.title}</td>
+                      <td className="px-4 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+                          <Icon className="w-3 h-3" />
+                          {expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-sm">{expense.paidBy}</td>
+                      <td className="px-4 py-4 text-right font-semibold">{formatCurrency(expense.amount)}</td>
+                      <td className="px-4 py-4 text-right text-sm text-muted-foreground">
+                        {formatCurrency(yourShare)}
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => onEdit?.(expense)}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            onClick={() => setDeleteExpense(expense)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

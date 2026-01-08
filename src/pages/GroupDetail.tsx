@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Plus, CheckCircle, Trash2 } from 'lucide-react';
+import { ChevronRight, Plus, CheckCircle, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Group, Expense } from '@/types';
 import { getGroupById, saveGroup, deleteGroup } from '@/utils/storage';
@@ -11,6 +12,7 @@ import ExpenseTable from '@/components/ExpenseTable';
 import BalanceView from '@/components/BalanceView';
 import AddExpenseModal from '@/components/AddExpenseModal';
 import EditExpenseModal from '@/components/EditExpenseModal';
+import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,16 +28,22 @@ import {
 const GroupDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [group, setGroup] = useState<Group | null>(null);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [activeTab, setActiveTab] = useState('expenses');
+  
+  // Settings state
+  const [editedName, setEditedName] = useState('');
+  const [newMemberName, setNewMemberName] = useState('');
 
   useEffect(() => {
     if (id) {
       const g = getGroupById(id);
       if (g) {
         setGroup(g);
+        setEditedName(g.name);
       } else {
         navigate('/dashboard');
       }
@@ -82,6 +90,98 @@ const GroupDetail = () => {
     if (!group) return;
     deleteGroup(group.id);
     navigate('/dashboard');
+  };
+
+  // Settings handlers
+  const handleSaveGroupName = () => {
+    if (!group) return;
+    const trimmedName = editedName.trim();
+    if (!trimmedName) {
+      toast({
+        title: "Invalid name",
+        description: "Group name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (trimmedName === group.name) return;
+    
+    const updatedGroup = { ...group, name: trimmedName };
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+    toast({
+      title: "Group updated",
+      description: "Group name has been updated.",
+    });
+  };
+
+  const handleAddMember = () => {
+    if (!group) return;
+    const trimmedName = newMemberName.trim();
+    if (!trimmedName) {
+      toast({
+        title: "Invalid name",
+        description: "Member name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (group.members.some((m) => m.toLowerCase() === trimmedName.toLowerCase())) {
+      toast({
+        title: "Duplicate member",
+        description: "This member already exists in the group.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const updatedGroup = {
+      ...group,
+      members: [...group.members, trimmedName],
+    };
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+    setNewMemberName('');
+    toast({
+      title: "Member added",
+      description: `${trimmedName} has been added to the group.`,
+    });
+  };
+
+  const handleRemoveMember = (memberName: string) => {
+    if (!group) return;
+    if (memberName === 'You') {
+      toast({
+        title: "Cannot remove",
+        description: "You cannot remove yourself from the group.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Check if member has any expenses
+    const hasExpenses = group.expenses.some(
+      (e) => e.paidBy === memberName || e.splitAmong.includes(memberName)
+    );
+    if (hasExpenses) {
+      toast({
+        title: "Cannot remove",
+        description: "This member has expenses. Delete their expenses first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const updatedGroup = {
+      ...group,
+      members: group.members.filter((m) => m !== memberName),
+    };
+    saveGroup(updatedGroup);
+    setGroup(updatedGroup);
+    toast({
+      title: "Member removed",
+      description: `${memberName} has been removed from the group.`,
+    });
   };
 
   if (!group) {
@@ -205,21 +305,78 @@ const GroupDetail = () => {
           </TabsContent>
 
           <TabsContent value="settings">
-            <div className="bg-card rounded-xl border border-border p-6 space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Group Members</h3>
-                <div className="flex flex-wrap gap-2">
-                  {group.members.map(member => (
-                    <div key={member} className="flex items-center gap-2 bg-muted rounded-full pl-1 pr-3 py-1">
-                      <MemberAvatar name={member} size="sm" />
-                      <span className="text-sm">{member}</span>
-                    </div>
-                  ))}
+            <div className="space-y-6">
+              {/* Group Name */}
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-semibold mb-4">Group Name</h3>
+                <div className="flex gap-2">
+                  <Input
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    placeholder="Enter group name"
+                    className="max-w-sm"
+                  />
+                  <Button
+                    onClick={handleSaveGroupName}
+                    disabled={editedName.trim() === group.name}
+                  >
+                    Save
+                  </Button>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-border">
-                <h3 className="font-semibold mb-2 text-destructive">Danger Zone</h3>
+              {/* Group Members */}
+              <div className="bg-card rounded-xl border border-border p-6">
+                <h3 className="font-semibold mb-4">Group Members</h3>
+                <div className="space-y-4">
+                  {/* Add Member */}
+                  <div className="flex gap-2">
+                    <Input
+                      value={newMemberName}
+                      onChange={(e) => setNewMemberName(e.target.value)}
+                      placeholder="New member name"
+                      className="max-w-sm"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddMember()}
+                    />
+                    <Button onClick={handleAddMember}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Member
+                    </Button>
+                  </div>
+
+                  {/* Member List */}
+                  <div className="space-y-2">
+                    {group.members.map((member) => (
+                      <div
+                        key={member}
+                        className="flex items-center justify-between rounded-lg border border-border p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <MemberAvatar name={member} size="sm" />
+                          <span className="font-medium">{member}</span>
+                          {member === 'You' && (
+                            <span className="text-xs text-muted-foreground">(you)</span>
+                          )}
+                        </div>
+                        {member !== 'You' && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            onClick={() => handleRemoveMember(member)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Danger Zone */}
+              <div className="bg-card rounded-xl border border-destructive/50 p-6">
+                <h3 className="font-semibold mb-4 text-destructive">Danger Zone</h3>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="gap-2">
