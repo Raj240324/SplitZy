@@ -239,7 +239,7 @@ const Settings = () => {
           <CardContent className="text-sm text-muted-foreground space-y-2">
             <div className="flex flex-col gap-0.5">
               <p className="font-bold text-foreground">SplitZy</p>
-              <p className="text-xs font-medium tracking-tight">Smart expense splitting for groups</p>
+              <p className="text-[10px] font-black tracking-[0.15em] text-muted-foreground/70 uppercase">Split bills not friendships</p>
             </div>
             <div className="pt-2 border-t border-border/50">
               <p className="text-xs font-semibold text-primary">Engineered by nagadev • No Cap</p>

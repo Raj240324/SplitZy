@@ -43,12 +43,18 @@ export const Header = () => {
               <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-7 w-7 sm:h-8 sm:w-8 object-contain relative transition-transform group-hover:rotate-12" />
             </div>
-            <div className="flex items-baseline gap-0.5 group-hover:tracking-tight transition-all duration-500 whitespace-nowrap">
-              <span className="font-medium text-sm sm:text-lg tracking-tighter text-foreground">
-                Split
-              </span>
-              <span className="brand-text brand-glitch text-lg sm:text-2xl !italic !font-black" data-text="Zy">
-                Zy
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-2 group-hover:tracking-tight transition-all duration-500 whitespace-nowrap">
+              <div className="flex items-baseline gap-0.5">
+                <span className="font-medium text-sm sm:text-lg tracking-tighter text-foreground">
+                  Split
+                </span>
+                <span className="brand-text brand-glitch text-lg sm:text-2xl !italic !font-black" data-text="Zy">
+                  Zy
+                </span>
+              </div>
+              <div className="hidden lg:block h-4 w-[1px] bg-border/50 mx-1" />
+              <span className="hidden lg:inline-block text-[10px] font-black tracking-[0.2em] text-muted-foreground/50 uppercase">
+                Split bills not friendships
               </span>
             </div>
           </NavLink>
