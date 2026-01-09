@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,17 +41,18 @@ const AddExpenseModal = ({
   onSave,
   initialData
 }: AddExpenseModalProps) => {
-  const [amount, setAmount] = useState(initialData?.amount || "");
-  const [title, setTitle] = useState(initialData?.title || "");
+  const [amount, setAmount] = useState("");
+  const [title, setTitle] = useState("");
   const [paidBy, setPaidBy] = useState("");
   const [category, setCategory] = useState<Expense["category"]>("other");
 
-  // Update state if initialData changes while open
-  // This is simple but effective for our flow where we close/re-open or just mount fresh
-  if (open && initialData && (initialData.amount !== amount && amount === "")) {
-      if(initialData.amount) setAmount(initialData.amount);
-      if(initialData.title) setTitle(initialData.title);
-  }
+  // Sync initialData to state when modal opens or initialData changes
+  useEffect(() => {
+    if (open && initialData) {
+      if (initialData.amount) setAmount(initialData.amount);
+      if (initialData.title) setTitle(initialData.title);
+    }
+  }, [open, initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,10 +126,10 @@ const AddExpenseModal = ({
           {/* Category */}
           <div className="space-y-2">
             <Label>Category</Label>
-<Select
-  value={category}
-  onValueChange={(value) => setCategory(value as Expense["category"])}
->
+            <Select
+              value={category}
+              onValueChange={(value) => setCategory(value as Expense["category"])}
+            >
               <SelectTrigger className="h-12">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>

@@ -445,7 +445,10 @@ const GroupDetail = () => {
 
         <AddExpenseModal
           open={showAddExpense}
-          onClose={() => setShowAddExpense(false)}
+          onClose={() => {
+            setShowAddExpense(false);
+            setScannedData(undefined);
+          }}
           members={group.members}
           onSave={handleAddExpense}
           initialData={scannedData}
