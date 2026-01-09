@@ -237,9 +237,14 @@ const Settings = () => {
           </CardHeader>
 
           <CardContent className="text-sm text-muted-foreground space-y-2">
-            <p className="font-semibold text-foreground">SplitZy</p>
-            <p>Smart expense splitting for groups</p>
-            <p className="text-xs opacity-60">Version 1.0.0</p>
+            <div className="flex flex-col gap-0.5">
+              <p className="font-bold text-foreground">SplitZy</p>
+              <p className="text-xs font-medium tracking-tight">Smart expense splitting for groups</p>
+            </div>
+            <div className="pt-2 border-t border-border/50">
+              <p className="text-xs font-semibold text-primary">Engineered by nagadev • No Cap</p>
+              <p className="text-[10px] opacity-60">Version 1.0.0 • 2026</p>
+            </div>
           </CardContent>
         </Card>
       </div>

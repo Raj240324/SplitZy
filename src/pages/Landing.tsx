@@ -362,16 +362,24 @@ const Landing = () => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-6 mt-4 md:mt-0">
-              <NavLink to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30">
-                Privacy Policy
-              </NavLink>
-              <NavLink to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30">
-                Terms of Service
-              </NavLink>
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5 leading-none">
+                Made with ❤️ by <span className="font-bold text-foreground transition-colors hover:text-primary cursor-default">nagadev</span> • +1000 Aura for the Group Chat
+              </p>
+              <div className="flex items-center justify-center gap-4 mt-2">
+                <NavLink to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
+                  Privacy Policy
+                </NavLink>
+                <NavLink to="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
+                  Terms of Service
+                </NavLink>
+                <a href="mailto:nagarajan.webdev@gmail.com" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
+                  Contact
+                </a>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} SplitZy. Split bills, not friendships.
+            <p className="text-xs text-muted-foreground/60 font-medium tracking-widest uppercase">
+              © {new Date().getFullYear()} SplitZy • Split bills, not friendships.
             </p>
           </div>
         </div>
