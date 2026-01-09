@@ -23,19 +23,18 @@ export default async function handler(req: Request) {
 
     /**
      * VERCEL AI GATEWAY CONFIGURATION
-     * 1. Create a Gateway at https://vercel.com/dashboard/ai
-     * 2. Replace 'YOUR_GATEWAY_ID' with your ID
-     * 3. Set baseURL to "https://gateway.vercel.ai/v1"
+     * Make sure 'splitzy-gateway' matches your Gateway ID/Slug in Vercel.
      */
-    // const google = createGoogleGenerativeAI({
-    //   baseURL: "https://gateway.vercel.ai/v1",
-    //   headers: {
-    //     "x-vercel-ai-gateway-id": "YOUR_GATEWAY_ID",
-    //   },
-    // });
+    const googleProxy = createGoogleGenerativeAI({
+      baseURL: "https://gateway.vercel.ai/v1",
+      headers: {
+        "x-vercel-ai-gateway-id": "splitzy-gateway", // UPDATE THIS IF YOUR SLUG IS DIFFERENT
+        "Authorization": `Bearer ${process.env.VERCEL_AI_GATEWAY_API_KEY}`,
+      },
+    });
 
     const result = await generateObject({
-      model: google('gemini-1.5-flash'), 
+      model: googleProxy('gemini-1.5-flash'), 
       schema: z.object({
         amount: z.number().optional().describe('The total amount of the bill/receipt'),
         title: z.string().optional().describe('The name of the merchant or store'),
