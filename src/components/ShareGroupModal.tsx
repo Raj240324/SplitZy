@@ -86,22 +86,23 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
             Invite others to join "{groupName}" to start splitting expenses together.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6 pt-4">
+        <div className="space-y-6 pt-4 overflow-hidden">
           {/* Invite Link Section */}
           <div className="space-y-2">
             <p className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Invite Link</p>
-            <div className="flex items-center gap-2 p-1.5 bg-muted/50 rounded-2xl border border-border/50">
-              <div className="flex-1 px-3 py-2 text-sm font-medium truncate opacity-70">
+            <div className="flex items-center gap-2 p-1.5 bg-muted/50 rounded-2xl border border-border/50 min-w-0">
+              <div className="flex-1 px-3 py-2 text-sm font-medium truncate opacity-70 min-w-0">
                 {inviteLink}
               </div>
               <Button 
                 variant="secondary" 
                 size="sm" 
                 onClick={handleCopyLink}
-                className="rounded-xl h-9 px-3 gap-2 font-bold"
+                className="rounded-xl h-9 px-3 gap-2 font-bold shrink-0"
               >
                 {copiedLink ? <Check className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
-                {copiedLink ? "Copied" : "Copy Link"}
+                <span className="hidden xs:inline">{copiedLink ? "Copied" : "Copy Link"}</span>
+                {!copiedLink && <span className="xs:hidden">Copy</span>}
               </Button>
             </div>
           </div>
@@ -109,15 +110,15 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
           {/* Share Code Section */}
           <div className="space-y-2">
             <p className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Group Code</p>
-            <div className="flex items-center justify-between gap-2 p-4 bg-primary/5 rounded-3xl border border-primary/10">
-              <div className="text-3xl font-mono tracking-[0.3em] font-black text-primary ml-2">
+            <div className="flex items-center justify-between gap-2 p-4 bg-primary/5 rounded-3xl border border-primary/10 overflow-hidden">
+              <div className="text-2xl sm:text-3xl font-mono tracking-[0.15em] sm:tracking-[0.3em] font-black text-primary ml-2 truncate">
                 {shareCode}
               </div>
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={handleCopyCode}
-                className="h-12 w-12 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all"
+                className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all shrink-0"
               >
                 {copiedCode ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </Button>
@@ -125,12 +126,13 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button variant="outline" onClick={onClose} className="flex-1 rounded-2xl h-12 font-bold">
+            <Button variant="outline" onClick={onClose} className="flex-1 rounded-2xl h-12 font-bold text-sm sm:text-base">
               Close
             </Button>
-            <Button onClick={handleShareMessage} className="flex-1 rounded-2xl h-12 font-bold gap-2">
+            <Button onClick={handleShareMessage} className="flex-1 rounded-2xl h-12 font-bold gap-2 text-sm sm:text-base">
               <Share2 className="w-4 h-4" />
-              Send Invite
+              <span className="hidden xs:inline">Send Invite</span>
+              <span className="xs:hidden">Invite</span>
             </Button>
           </div>
         </div>
