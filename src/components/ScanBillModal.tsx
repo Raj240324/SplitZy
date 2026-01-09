@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { createWorker } from 'tesseract.js';
 import { Camera, Upload, Loader2, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,44 +39,71 @@ const ScanBillModal = ({ open, onClose, onScanComplete }: ScanBillModalProps) =>
     if (!image) return;
 
     setIsProcessing(true);
-    setProgress(10); // Start progress
+    setProgress(0);
 
     try {
-      const response = await fetch('/api/scan-receipt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Tesseract.js v5 style
+      const worker = await createWorker('eng', 1, {
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            setProgress(Math.round(m.progress * 100));
+          }
         },
-        body: JSON.stringify({ image }),
+      });
+      
+      const { data: { text } } = await worker.recognize(image);
+      await worker.terminate();
+
+      // Simple heuristic parsing
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      // Attempt to find total amount
+      const numberRegex = /(\d+\.\d{2})/;
+      let maxAmount = 0;
+      let probableTitle = '';
+
+      // Try to find merchant name
+      if (lines.length > 0) {
+        probableTitle = lines[0].substring(0, 30).trim();
+      }
+
+      // Find the largest number
+      lines.forEach(line => {
+        const match = line.match(numberRegex);
+        if (match) {
+          const value = parseFloat(match[1]);
+          if (!isNaN(value)) {
+            if (line.toLowerCase().includes('total') || line.toLowerCase().includes('amount')) {
+               if (value > maxAmount) maxAmount = value;
+            } else {
+               if (value > maxAmount) maxAmount = value;
+            }
+          }
+        }
       });
 
-      setProgress(50);
-
-      if (!response.ok) {
-        throw new Error('Failed to process image');
-      }
-
-      const data = await response.json();
-      setProgress(100);
-
-      if (data.amount || data.title) {
+      if (maxAmount > 0) {
         toast({
-          title: "AI Scan Successful",
-          description: `Found: ${data.title || 'Merchant'} - ${data.amount || 'Amount'}`,
+            title: "Scan Successful",
+            description: `Found amount: ${maxAmount}`,
         });
-        onScanComplete({ 
-          amount: data.amount, 
-          title: data.title || 'Scanned Receipt' 
-        });
+        onScanComplete({ amount: maxAmount, title: probableTitle || 'Scanned Receipt' });
         handleClose();
       } else {
-        throw new Error('No data extracted');
+        toast({
+            title: "Scan Incomplete",
+            description: "Could not detect a valid total amount. Please enter manually.",
+            variant: "destructive"
+        });
+        onScanComplete({ title: probableTitle || 'Scanned Receipt' });
+        handleClose();
       }
+
     } catch (error) {
-      console.error('Scan error:', error);
+      console.error(error);
       toast({
         title: "Scan Failed",
-        description: "AI could not process this image. Please enter manually.",
+        description: "Error processing image. Please try again.",
         variant: "destructive"
       });
     } finally {
