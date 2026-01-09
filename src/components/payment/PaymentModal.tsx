@@ -37,14 +37,18 @@ export const PaymentModal = ({
   const { toast } = useToast();
   const [step, setStep] = useState<'method' | 'pay' | 'confirm'>('method');
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'cash'>('upi');
+  const [transactionId, setTransactionId] = useState<string>('');
 
-  // Reset step on open
+  // Reset step on open and generate fresh transaction ID
   useEffect(() => {
-    if (open) setStep('method'); 
+    if (open) {
+      setStep('method'); 
+      setTransactionId(`SZ${Date.now()}${Math.floor(Math.random() * 1000)}`);
+    }
   }, [open]);
 
   const upiLink = toUser.upiId 
-    ? generateUpiLink(toUser.upiId, toUser.name, amount) 
+    ? generateUpiLink(toUser.upiId, toUser.name, amount, transactionId) 
     : '';
 
   const handleCopyUpi = () => {
