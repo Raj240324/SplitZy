@@ -21,13 +21,13 @@ interface SettleUpModalProps {
   onSettle: (settlement: Settlement, options?: { method?: 'upi' | 'cash' | 'other'; status?: 'pending' | 'completed' }) => void;
   getCurrencySymbol: () => string;
   memberUpiIds?: Record<string, string>;
+  onPay?: (settlement: Settlement) => void;
 }
 
-const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, memberUpiIds }: SettleUpModalProps) => {
+const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, memberUpiIds, onPay }: SettleUpModalProps) => {
   const { toast } = useToast();
 
   const [selectedSettlement, setSelectedSettlement] = useState<Settlement | null>(null);
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   // Calculate simplified settlements
   const calculateSettlements = (): Settlement[] => {
@@ -72,6 +72,8 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, m
 
   const settlements = calculateSettlements();
 
+  // ... calculateSettlements stays same ...
+
   // Legacy fast settle (Manual/Cash)
   const handleManualSettle = (settlement: Settlement) => {
     // For manual/cash, we also mark as pending to ensure receiver confirms receipt
@@ -83,21 +85,12 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, m
   };
 
   const initiatePayment = (settlement: Settlement) => {
-    setSelectedSettlement(settlement);
-    setIsPaymentModalOpen(true);
-  };
-
-  const calculatePayment = (method: 'upi' | 'cash') => {
-    if (!selectedSettlement) return;
-    
-    // Mark as pending for receiver confirmation
-    onSettle(selectedSettlement, { method: method, status: 'pending' });
-    
-    toast({
-      title: method === 'upi' ? 'Payment Initiated' : 'Settlement Recorded',
-      description: `Waiting for confirmation from ${selectedSettlement.to}`,
-    });
-    setIsPaymentModalOpen(false);
+    if (onPay) {
+      onPay(settlement);
+      onClose(); // Close the settle up list when starting payment
+    } else {
+      setSelectedSettlement(settlement);
+    }
   };
 
   const allSettled = settlements.length === 0;
@@ -187,21 +180,6 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, m
           </div>
         </DialogContent>
       </Dialog>
-
-      {selectedSettlement && (
-        <PaymentModal 
-          open={isPaymentModalOpen}
-          onClose={() => setIsPaymentModalOpen(false)}
-          fromUser={{ name: selectedSettlement.from }}
-          toUser={{ 
-            name: selectedSettlement.to, 
-            upiId: memberUpiIds?.[selectedSettlement.to] 
-          }}
-          amount={selectedSettlement.amount}
-          currencySymbol={getCurrencySymbol()}
-          onPaymentComplete={calculatePayment}
-        />
-      )}
     </>
   );
 };

@@ -9,9 +9,10 @@ interface BalanceViewProps {
   balances: MemberBalance[];
   totalSpend: number;
   memberUpiIds?: Record<string, string>;
+  onPay?: (to: string, amount: number) => void;
 }
 
-const BalanceView = ({ balances, totalSpend, memberUpiIds }: BalanceViewProps) => {
+const BalanceView = ({ balances, totalSpend, memberUpiIds, onPay }: BalanceViewProps) => {
   return (
     <div className="space-y-6">
       {/* Total Spending Card */}
@@ -75,7 +76,13 @@ const BalanceView = ({ balances, totalSpend, memberUpiIds }: BalanceViewProps) =
                             variant="default" 
                             size="sm" 
                             className="h-8 text-fluid-xs font-black uppercase tracking-widest gap-1.5 rounded-xl shadow-lg shadow-primary/20"
-                            onClick={() => window.location.href = generateUpiLink(memberUpiIds[debt.member], debt.member, debt.amount)}
+                            onClick={() => {
+                              if (onPay) {
+                                onPay(debt.member, debt.amount);
+                              } else {
+                                window.location.href = generateUpiLink(memberUpiIds[debt.member], debt.member, debt.amount);
+                              }
+                            }}
                           >
                             <Smartphone className="w-3 h-3" />
                             Pay UPI

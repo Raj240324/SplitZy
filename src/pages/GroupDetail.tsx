@@ -39,7 +39,8 @@ import { ScanLine } from 'lucide-react';
 
 import { useUser } from '@clerk/clerk-react';
 import { SettlementCard } from '@/components/payment/SettlementCard';
-
+import { getUserProfile } from '@/services/user.service';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 
 const GroupDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -68,6 +69,9 @@ const GroupDetail = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showSettleModal, setShowSettleModal] = useState(false);
   
+  // Payment state (can be triggered by SettleUpModal or BalanceView)
+  const [activePayment, setActivePayment] = useState<{from: string, to: string, amount: number} | null>(null);
+  
   // Settings state
   const [editedName, setEditedName] = useState('');
   const [newMemberName, setNewMemberName] = useState('');
@@ -75,6 +79,33 @@ const GroupDetail = () => {
   // Scan Bill state
   const [showScanBill, setShowScanBill] = useState(false);
   const [scannedData, setScannedData] = useState<{ amount?: string; title?: string } | undefined>(undefined);
+
+  // Sync UPI from Profile
+  useEffect(() => {
+    const syncProfileUpi = async () => {
+      if (!user || !group) return;
+      
+      try {
+        const profile = await getUserProfile(user.id);
+        const primaryUpi = profile?.upiIds.find(u => u.isPrimary)?.vpa;
+        
+        if (primaryUpi && group.memberUpiIds?.['You'] !== primaryUpi) {
+          updateGroup({
+            memberUpiIds: {
+              ...(group.memberUpiIds || {}),
+              'You': primaryUpi
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Failed to sync profile UPI:", err);
+      }
+    };
+
+    if (group && user) {
+      syncProfileUpi();
+    }
+  }, [group?.id, user?.id]);
 
   const handleScanComplete = (data: { amount?: number; title?: string }) => {
     setScannedData({
@@ -348,6 +379,7 @@ const GroupDetail = () => {
                 balances={balances}
                 totalSpend={totalSpend}
                 memberUpiIds={group.memberUpiIds}
+                onPay={(to, amount) => setActivePayment({ from: 'You', to, amount })}
               />
             </TabsContent>
 
@@ -543,7 +575,26 @@ const GroupDetail = () => {
           onSettle={handleSettlement}
           getCurrencySymbol={getCurrencySymbol}
           memberUpiIds={group.memberUpiIds}
+          onPay={(settlement) => setActivePayment(settlement)}
         />
+
+        {activePayment && (
+          <PaymentModal 
+            open={!!activePayment}
+            onClose={() => setActivePayment(null)}
+            fromUser={{ name: activePayment.from }}
+            toUser={{ 
+              name: activePayment.to, 
+              upiId: group.memberUpiIds?.[activePayment.to] 
+            }}
+            amount={activePayment.amount}
+            currencySymbol={getCurrencySymbol()}
+            onPaymentComplete={(method) => {
+              handleSettlement(activePayment, { method, status: 'pending' });
+              setActivePayment(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
