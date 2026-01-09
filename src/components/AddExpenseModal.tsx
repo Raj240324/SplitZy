@@ -150,10 +150,10 @@ const AddExpenseModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="p-0 gap-0 sm:max-w-md bg-background overflow-hidden flex flex-col h-[95vh] sm:h-auto sm:max-h-[85vh] rounded-t-[1.5rem] sm:rounded-3xl border-0 sm:border [&>button]:hidden">
+      <DialogContent className="p-0 gap-0 sm:max-w-md bg-background overflow-hidden flex flex-col h-[92vh] sm:h-auto sm:max-h-[90vh] rounded-t-[2rem] sm:rounded-3xl border-0 sm:border [&>button]:hidden">
         
         {/* Sticky Header */}
-        <div className="px-6 py-4 flex items-center justify-between border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10 shrink-0">
           <div>
             <DialogTitle className="text-xl font-black tracking-tight">Add Expense</DialogTitle>
             <DialogDescription className="text-xs font-medium text-muted-foreground mt-0.5">
@@ -165,8 +165,10 @@ const AddExpenseModal = ({
           </DialogPrimitive.Close>
         </div>
 
-        <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-6 pb-24">
-          <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-8">
+        {/* Scrollable Area */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin scroll-smooth min-h-0">
+          <div className="px-6 py-8 pb-32">
+            <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-10">
             
             {/* Amount Section (Hero) */}
             <div className="space-y-4 text-center">
@@ -350,9 +352,10 @@ const AddExpenseModal = ({
 
           </form>
         </div>
+      </div>
 
-        {/* Sticky Footer */}
-        <div className="p-4 bg-background/80 backdrop-blur-xl border-t border-border/40 absolute bottom-0 left-0 right-0 z-20">
+      {/* Sticky Footer */}
+        <div className="p-4 bg-background/90 backdrop-blur-xl border-t border-border/40 shrink-0">
           <Button 
             form="add-expense-form" 
             type="submit" 
