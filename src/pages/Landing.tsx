@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth, SignInButton } from '@clerk/clerk-react';
-import { Users, Receipt, CheckCircle, Utensils, Plane, Home, PartyPopper, Shield, Zap, TrendingUp, Lock, Smartphone, ChevronDown } from 'lucide-react';
+import { Users, Receipt, CheckCircle, Utensils, Plane, Home, PartyPopper, Shield, Zap, TrendingUp, Lock, Smartphone, ChevronDown, ScanLine, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Header } from '@/components/Header';
+import { NavLink } from '@/components/NavLink';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Landing = () => {
 
   const steps = [
     { icon: Users, title: 'Start a Vibe', desc: 'Add the squad, the roomies, or the travel besties.' },
-    { icon: Receipt, title: 'Check the Receipts', desc: 'Log who paid for what — coffee, Ubers, concert tickets.' },
+    { icon: ScanLine, title: 'Scan & Go', desc: 'Snap a pic of the receipt. Our AI handles the math instantly.' },
     { icon: CheckCircle, title: 'No Cap, No Debt', desc: 'See who owes what and settle up instantly. Zero awkwardness.' }
   ];
 
@@ -23,10 +24,10 @@ const Landing = () => {
   ];
 
   const features = [
-    { icon: Shield, title: 'Safe & Secure', desc: 'Bank-level lockup via Clerk. Your data is your business, period.' },
-    { icon: Zap, title: 'Speedrun Mode', desc: 'Log expenses in seconds. Zero lag, all efficiency.' },
-    { icon: TrendingUp, title: 'Big Brain Energy', desc: 'Visual charts that actually make sense. See where the money went.' },
-    { icon: Smartphone, title: 'Offline Era', desc: 'Access your groups without Wifi. It just works, everywhere.' }
+    { icon: ScanLine, title: 'AI Bill Scanning', desc: 'Snap a pic and let OCR extract the total. No more manual entry.' },
+    { icon: Zap, title: 'Real-time Sync', desc: 'Powered by Firebase. Your data syncs instantly across every device.' },
+    { icon: TrendingUp, title: 'Visual Analytics', desc: 'Smart charts that show exactly where the money goes.' },
+    { icon: Printer, title: 'Print & Export', desc: 'Export beautiful CSV reports or print professional group summaries.' }
   ];
 
   const faqs = [
@@ -36,11 +37,11 @@ const Landing = () => {
     },
     {
       question: 'Is my data safe?',
-      answer: "We use Clerk for secure logins. We're not in the business of selling data, only in the business of splitting bills."
+      answer: "We use Clerk for authentication and Google Firebase for secure cloud storage. Your data is encrypted and private — we never sell it."
     },
     {
-      question: 'Can I use it without Wifi?',
-      answer: "Yeah, it's a PWA. Install it on your home screen and it works offline like a total pro."
+      question: 'Can I use it on multiple devices?',
+      answer: "Absolutely. Log in from any phone or laptop and find your groups perfectly synced in real-time."
     },
     {
       question: 'How do I "Settle Up"?',
@@ -55,7 +56,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-white">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-white transition-colors duration-500 selection:bg-primary/30">
         <Header />
         {/* Animated Background Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,28 +65,28 @@ const Landing = () => {
           <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/10 rounded-full blur-[100px] animate-blob animation-delay-4000" />
         </div>
 
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-6 md:px-12 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-left">
+            <div className="text-left lg:pl-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 animate-fade-in">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span className="text-xs font-medium tracking-wide text-primary-foreground/80 uppercase">100% Free Forever</span>
+                <span className="text-[10px] font-black tracking-[0.2em] text-primary-foreground/60 uppercase">100% Free Forever</span>
               </div>
               
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 md:mb-8 tracking-tight leading-[1.1]">
+              <h1 className="text-5xl sm:text-6xl md:text-8xl font-black mb-6 md:mb-8 tracking-[-0.04em] leading-[0.95] text-white">
                 Less stress. <br /> 
-                <span className="brand-text brand-glitch italic !font-black pb-2 block" data-text="More vibes.">
+                <span className="brand-text brand-glitch italic pb-2 block" data-text="More vibes.">
                   More vibes.
                 </span>
               </h1>
               
-              <p className="text-lg md:text-xl text-slate-400 mb-8 md:mb-10 max-w-lg leading-relaxed">
+              <p className="text-lg md:text-2xl text-slate-400 mb-8 md:mb-12 max-w-lg leading-relaxed font-light tracking-tight">
                 <span className="whitespace-nowrap">
                   <span className="font-bold text-white/90">Split</span><span className="brand-text brand-glitch !text-lg mx-0.5" data-text="Zy">Zy</span>
-                </span> tracks the receipts so you can focus on the memories. Roomies, trips, or brunch — we got you, no cap.
+                </span> uses AI and Firebase to scan receipts and sync expenses in real-time. Roomies, trips, or brunch — we got you, no cap.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-start">
@@ -101,7 +102,7 @@ const Landing = () => {
                 ) : (
                   <Button 
                     size="lg" 
-                    className="text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
+                    className="w-full sm:w-auto text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
                     onClick={() => navigate('/sign-in')}
                   >
                     Start a Group
@@ -111,8 +112,13 @@ const Landing = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="w-full sm:w-auto text-lg px-8 py-7 font-bold bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white"
-                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full sm:w-auto text-lg px-8 py-7 font-bold bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white transition-all font-black tracking-tight"
+                  onClick={() => {
+                    const lenis = (window as any).lenis;
+                    if (lenis) {
+                      lenis.scrollTo('#features', { offset: -80 });
+                    }
+                  }}
                 >
                   Learn More
                 </Button>
@@ -122,7 +128,7 @@ const Landing = () => {
                 <div className="mt-8 flex items-center gap-3 text-sm text-slate-500">
                   <div className="flex -space-x-2">
                     {[1,2,3].map(i => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center text-[10px] font-bold">
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400 shadow-sm">
                         {String.fromCharCode(64 + i)}
                       </div>
                     ))}
@@ -137,7 +143,7 @@ const Landing = () => {
               {/* Main Card */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl p-8 animate-float">
                 <div className="flex items-center justify-between mb-8">
-                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center font-bold text-xl">S</div>
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-primary/20">S</div>
                   <div className="h-6 w-24 bg-white/10 rounded-full animate-pulse" />
                 </div>
                 <div className="space-y-4">
@@ -159,20 +165,20 @@ const Landing = () => {
               {/* Floating Mini Cards */}
               <div className="absolute top-[10%] right-[0%] p-4 bg-emerald-500/20 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-xl animate-float-delayed">
                  <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center"><CheckCircle className="w-4 h-4" /></div>
+                   <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20"><CheckCircle className="w-4 h-4" /></div>
                    <div>
                      <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Settled Up</p>
-                     <p className="text-xs font-semibold">You get ₹500</p>
+                     <p className="text-xs font-semibold text-white">You get ₹500</p>
                    </div>
                  </div>
               </div>
 
               <div className="absolute bottom-[10%] left-[0%] p-4 bg-primary/20 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-xl animate-float animation-delay-2000">
                  <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-xs">+</div>
+                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-black text-white text-xs shadow-lg shadow-primary/20">+</div>
                    <div>
                      <p className="text-[10px] font-bold uppercase tracking-wider text-primary">New Expense</p>
-                     <p className="text-xs font-semibold">Trip Eras: ₹12,000</p>
+                     <p className="text-xs font-semibold text-white">Trip Eras: ₹12,000</p>
                    </div>
                  </div>
               </div>
@@ -182,43 +188,53 @@ const Landing = () => {
       </section>
 
       {/* Trust Indicators */}
-      <section id="features" className="py-12 border-b border-border bg-card/50">
+      <section id="features" className="py-12 border-b border-border bg-muted/30 dark:bg-slate-900/50 backdrop-blur-sm transition-colors">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 text-center">
-            <div className="flex items-center gap-2">
-              <Lock className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium uppercase tracking-wider">Secure Era</span>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 text-center">
+            <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Lock className="w-5 h-5 text-primary" />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">Secure Era</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium uppercase tracking-wider">Free Forever</span>
+            <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Shield className="w-5 h-5 text-emerald-500" />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">Free Forever</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium uppercase tracking-wider">No ads. No Cap.</span>
+            <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+              <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Users className="w-5 h-5 text-orange-500" />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">No ads. No Cap.</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Key Features */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">Built for the modern world</h2>
-          <p className="text-muted-foreground text-center mb-10 md:mb-12 max-w-sm md:max-w-md mx-auto">
-            Powerful features that make expense splitting effortless
+      <section className="py-32 bg-background dark:bg-slate-950 relative overflow-hidden transition-colors">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <h2 className="text-4xl md:text-7xl font-black text-center mb-6 tracking-[-0.03em] text-foreground leading-tight transition-colors">
+            Built for the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-400 to-fuchsia-400 animate-shimmer">modern world</span>
+          </h2>
+          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-xl leading-relaxed font-light tracking-tight transition-colors">
+            Powerful features that make expense splitting effortless.
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {features.map((feature, i) => (
               <div 
                 key={i} 
-                className="bg-card rounded-xl p-6 border border-border hover:border-primary/50 transition-all hover:shadow-lg group"
+                className="bg-card dark:bg-slate-900/50 backdrop-blur-xl rounded-3xl p-8 border border-border/50 dark:border-white/5 hover:border-primary/50 transition-all hover:shadow-[0_20px_50px_rgba(var(--primary),0.05)] group relative overflow-hidden"
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors" />
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-inner">
+                  <feature.icon className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2 text-lg">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{feature.desc}</p>
+                <h3 className="font-bold mb-3 text-xl text-foreground group-hover:text-primary transition-colors">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed group-hover:text-foreground/70 transition-colors">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -226,24 +242,26 @@ const Landing = () => {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 bg-muted/30">
+      <section id="how-it-works" className="py-32 bg-muted/20 dark:bg-gradient-to-b dark:from-slate-950 dark:to-slate-900 relative transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">How It Works</h2>
-          <p className="text-muted-foreground text-center mb-10 md:mb-12 max-w-sm md:max-w-md mx-auto">
+          <h2 className="text-4xl md:text-7xl font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">How It Works</h2>
+          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-xl font-light tracking-tight transition-colors">
             Three simple steps to fair expense splitting
           </p>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
             {steps.map((step, i) => (
               <div 
                 key={i} 
-                className="bg-card rounded-2xl p-8 text-center shadow-sm border border-border/50 hover:shadow-md transition-all"
+                className="relative bg-card dark:bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 text-center border border-border/50 dark:border-white/5 hover:bg-muted/50 dark:hover:bg-slate-800/50 transition-all group shadow-sm"
               >
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <step.icon className="w-8 h-8 text-primary" />
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform">
+                  {i + 1}
                 </div>
-                <div className="text-sm font-medium text-primary mb-2">Step {i + 1}</div>
-                <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                <p className="text-muted-foreground text-sm">{step.desc}</p>
+                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform shadow-inner">
+                  <step.icon className="w-10 h-10 text-primary" />
+                </div>
+                <h3 className="text-2xl font-black mb-4 text-foreground uppercase tracking-tight transition-colors">{step.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed font-medium transition-colors">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -251,23 +269,26 @@ const Landing = () => {
       </section>
 
       {/* Use Cases */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">Perfect for any situation</h2>
-          <p className="text-muted-foreground text-center mb-10 md:mb-12 max-w-sm md:max-w-md mx-auto">
+      <section className="py-24 bg-background dark:bg-slate-900 overflow-hidden relative transition-colors">
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <h2 className="text-3xl md:text-5xl font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">
+            Perfect for <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-500 transition-colors">any situation</span>
+          </h2>
+          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-lg leading-relaxed transition-colors">
             Whether it's a trip, a party, or daily life.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {useCases.map((use, i) => (
               <div 
                 key={i} 
-                className="bg-card rounded-xl p-6 border border-border hover:border-primary/50 transition-colors group"
+                className="bg-card dark:bg-slate-800/20 backdrop-blur-md rounded-2xl p-8 border border-border/50 dark:border-white/5 hover:border-blue-500/30 transition-all group flex flex-col items-center text-center shadow-sm"
               >
-                <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/5 transition-colors">
-                  <use.icon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                <div className="w-16 h-16 bg-muted dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-500/10 transition-all group-hover:shadow-lg">
+                  <use.icon className="w-8 h-8 text-muted-foreground dark:text-slate-400 group-hover:text-blue-500 group-hover:scale-110 transition-all" />
                 </div>
-                <h3 className="font-semibold mb-2">{use.title}</h3>
-                <p className="text-muted-foreground text-sm">{use.desc}</p>
+                <h3 className="font-black mb-3 text-lg text-foreground group-hover:text-blue-500 transition-colors uppercase tracking-tight">{use.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed font-medium transition-colors">{use.desc}</p>
               </div>
             ))}
           </div>
@@ -275,20 +296,20 @@ const Landing = () => {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 bg-muted/30">
+      <section id="faq" className="py-24 bg-muted/10 dark:bg-slate-950 transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Frequently Asked Questions</h2>
-          <p className="text-muted-foreground text-center mb-12 max-w-md mx-auto">
+          <h2 className="text-3xl md:text-5xl font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">FAQ</h2>
+          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-lg leading-relaxed transition-colors">
             Everything you need to know about SplitZy
           </p>
-          <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="space-y-4">
+          <div className="max-w-4xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-6">
               {faqs.map((faq, i) => (
-                <AccordionItem key={i} value={`item-${i}`} className="bg-card border border-border rounded-lg px-6">
-                  <AccordionTrigger className="text-left font-semibold hover:no-underline py-4">
-                    {faq.question}
+                <AccordionItem key={i} value={`item-${i}`} className="bg-card dark:bg-slate-900/50 backdrop-blur-sm border border-border/50 dark:border-white/5 rounded-3xl px-8 md:px-10 overflow-hidden hover:border-primary/30 transition-all shadow-sm">
+                  <AccordionTrigger className="text-left font-black text-lg md:text-xl hover:no-underline py-6 text-foreground group transition-colors">
+                    <span className="group-hover:text-primary transition-colors">{faq.question}</span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">
+                  <AccordionContent className="text-muted-foreground text-base md:text-lg pb-8 leading-relaxed font-medium transition-colors">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
@@ -340,6 +361,14 @@ const Landing = () => {
                   Zy
                 </span>
               </div>
+            </div>
+            <div className="flex items-center gap-6 mt-4 md:mt-0">
+              <NavLink to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30">
+                Privacy Policy
+              </NavLink>
+              <NavLink to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30">
+                Terms of Service
+              </NavLink>
             </div>
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} SplitZy. Split bills, not friendships.

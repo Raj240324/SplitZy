@@ -9,12 +9,50 @@ import {
   query, 
   where, 
   getDocs,
-  onSnapshot
+  onSnapshot,
+  getDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Group, Expense } from '@/types';
+import { createNotification } from './notification.service';
 
 const GROUPS_COLLECTION = 'groups';
+
+// Helper to notify group members
+const notifyGroup = async (groupId: string, title: string, message: string, type: 'expense' | 'group' | 'settlement', actorId?: string) => {
+    try {
+        const groupDoc = await getDoc(doc(db, GROUPS_COLLECTION, groupId));
+        if (groupDoc.exists()) {
+            const data = groupDoc.data();
+            const userIds = data.userIds || [];
+            const groupName = data.name || 'Group';
+            
+            userIds.forEach((userId: string) => {
+                if (userId !== actorId) {
+                    createNotification(userId, title, `${message} in "${groupName}"`, type);
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error notifying group:', error);
+    }
+};
+
+
+// Helper to add activity
+const addActivity = async (groupId: string, type: string, description: string, byUser?: string) => {
+    const activity = {
+        id: crypto.randomUUID(),
+        type,
+        description,
+        timestamp: Date.now(),
+        byUser: byUser || 'Unknown'
+    };
+
+    await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
+        activities: arrayUnion(activity)
+    });
+};
 
 export const createGroup = async (groupData: Omit<Group, 'id'>, userId?: string) => {
     const dataToSave = {
@@ -22,11 +60,21 @@ export const createGroup = async (groupData: Omit<Group, 'id'>, userId?: string)
         shareCode: groupData.shareCode || Math.random().toString(36).substring(2, 8).toUpperCase(),
         createdAt: groupData.createdAt || Date.now(),
         expenses: [],
+        activities: [], // Initialize activities
         // Store userIds for querying, even if not in strict Group type
         userIds: userId ? [userId] : []
     };
 
     const docRef = await addDoc(collection(db, GROUPS_COLLECTION), dataToSave);
+    
+    // Initial activity
+    await addActivity(docRef.id, 'group_updated', `Group "${groupData.name}" created`, userId);
+
+    // Initial notification (only for the creator)
+    if (userId) {
+        await createNotification(userId, 'Group Created', `You created your new group "${groupData.name}"`, 'group');
+    }
+    
     return docRef.id;
 };
 
@@ -40,6 +88,10 @@ export const deleteGroupService = deleteGroup;
 
 export const updateGroupService = async (groupId: string, data: Partial<Group>) => {
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), data);
+    
+    if (data.name) {
+        await addActivity(groupId, 'group_updated', `Group renamed to "${data.name}"`);
+    }
 };
 
 export const getGroupByShareCode = async (code: string, userId?: string) => {
@@ -60,6 +112,12 @@ export const joinGroupByShareCode = async (code: string, userId?: string) => {
         await updateDoc(doc(db, GROUPS_COLLECTION, group.id), {
             userIds: arrayUnion(userId)
         });
+        
+        // Notify others that someone joined
+        await notifyGroup(group.id, 'Member Joined', 'Someone joined the group using the share code', 'group', userId);
+        
+        // Notify the joining user
+        await createNotification(userId, 'Joined Group', `You successfully joined "${group.name}"`, 'group');
     }
     return group;
 };
@@ -91,29 +149,67 @@ export const addExpenseService = async (groupId: string, expense: Omit<Expense, 
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         expenses: arrayUnion(newExpense)
     });
+
+    const isSettlement = expense.type === 'settlement';
+    const type = isSettlement ? 'settlement' : 'expense_added';
+    const desc = isSettlement 
+        ? `${expense.paidBy} paid ${expense.splitAmong[0]} ${expense.amount}`
+        : `${expense.paidBy} added "${expense.title}"`;
+
+    await addActivity(groupId, type, desc, expense.paidBy);
+
+    // Notifications
+    const notificationTitle = isSettlement ? 'Settlement Recorded' : 'New Expense';
+    const notificationType = isSettlement ? 'settlement' : 'expense';
+    
+    // Note: We don't have actor's Clerk ID here directly, but we can pass it if we update the callers.
+    // For now, it will notify everyone. Ideally callers should pass Clerk ID.
+    await notifyGroup(groupId, notificationTitle, desc, notificationType);
+
     return newExpense;
 };
 
 export const updateExpenseService = async (groupId: string, expenses: Expense[]) => {
+    // We need to know WHICH expense changed to log it, but here we just replace the whole array.
+    // Ideally we would fetch the old one, but for now let's just update.
+    // To properly log "expense_updated", we might need to change the signature or just log generic "Expense updated".
+    // For a better UX, let's assume the UI calls this for a single update usually? 
+    // Actually, updateExpenseService replaces ALL expenses. This is slightly dangerous for concurrency but matches existing pattern.
+    // Let's just log a generic message or try to find diff? 
+    // Finding diff is too expensive here without old data.
+    // We will trust the UI to trigger this ONLY when an expense is updated.
+
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         expenses
     });
+
+    // NOTE: Detailed logging for updates is tricky with this "replace all" strategy. 
+    // We'll log a generic message.
+    await addActivity(groupId, 'expense_updated', 'An expense was updated');
 };
+
+// We need a better update service that takes just the ID to log better, but keeping existing signature for now.
 
 export const deleteExpenseService = async (groupId: string, expense: Expense) => {
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         expenses: arrayRemove(expense)
     });
+
+    await addActivity(groupId, 'expense_deleted', `Expense "${expense.title}" deleted`, expense.paidBy);
 };
 
 export const addMemberService = async (groupId: string, name: string) => {
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         members: arrayUnion(name)
     });
+
+    await addActivity(groupId, 'member_added', `${name} joined the group`);
 };
 
 export const removeMemberService = async (groupId: string, name: string) => {
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         members: arrayRemove(name)
     });
+
+    await addActivity(groupId, 'member_removed', `${name} left the group`);
 };

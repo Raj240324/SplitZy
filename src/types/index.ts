@@ -38,3 +38,14 @@ export interface Activity {
   timestamp: number;
   byUser?: string;
 }
+
+export interface AppNotification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: 'expense' | 'group' | 'settlement';
+  read: boolean;
+  createdAt: any;
+}
+

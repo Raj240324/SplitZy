@@ -71,11 +71,11 @@ const Dashboard = () => {
               <h1 className="text-2xl md:text-3xl font-bold">Your Groups</h1>
               <p className="text-muted-foreground">Manage your shared expenses with friends and family</p>
             </div>
-            <div className="flex gap-3">
-              <Button onClick={() => setShowJoinModal(true)} variant="outline">
+            <div className="flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
+              <Button onClick={() => setShowJoinModal(true)} variant="outline" className="flex-1 xs:flex-none">
                 Join Group
               </Button>
-              <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+              <Button onClick={() => setShowCreateModal(true)} className="gap-2 flex-1 xs:flex-none">
                 <Plus className="w-4 h-4" />
                 New Group
               </Button>

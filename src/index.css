@@ -1,8 +1,8 @@
 
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @layer base {
   :root {
@@ -214,12 +214,21 @@
 }
 
 @layer base {
+  html {
+    scroll-padding-top: 80px; /* Accounts for the floating header */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20;
     font-family: "Inter", sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Space Grotesk", sans-serif;
   }
 }
 
@@ -235,5 +244,12 @@
   }
   .bg-balance-negative {
     background-color: hsl(var(--balance-negative) / 0.1);
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

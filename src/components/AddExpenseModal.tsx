@@ -23,6 +23,7 @@ interface AddExpenseModalProps {
   onClose: () => void;
   members: string[];
   onSave: (expense: Omit<Expense, "id">) => void;
+  initialData?: { amount?: string; title?: string };
 }
 
 const categories = [
@@ -38,11 +39,19 @@ const AddExpenseModal = ({
   onClose,
   members,
   onSave,
+  initialData
 }: AddExpenseModalProps) => {
-  const [amount, setAmount] = useState("");
-  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState(initialData?.amount || "");
+  const [title, setTitle] = useState(initialData?.title || "");
   const [paidBy, setPaidBy] = useState("");
   const [category, setCategory] = useState<Expense["category"]>("other");
+
+  // Update state if initialData changes while open
+  // This is simple but effective for our flow where we close/re-open or just mount fresh
+  if (open && initialData && (initialData.amount !== amount && amount === "")) {
+      if(initialData.amount) setAmount(initialData.amount);
+      if(initialData.title) setTitle(initialData.title);
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +81,7 @@ const AddExpenseModal = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Add Expense</DialogTitle>
           <DialogDescription>
