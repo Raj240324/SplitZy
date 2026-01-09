@@ -266,9 +266,32 @@
 
     /* Prevent popovers (notifications, etc) from overflowing screen */
     [data-radix-popper-content-wrapper] {
-      max-width: calc(100vw - 2rem) !important;
-      left: 1rem !important;
-      right: 1rem !important;
+      max-width: calc(100vw - 1rem) !important;
+      left: 0.5rem !important;
+      right: 0.5rem !important;
+    }
+
+    /* Clerk Popover Specific Fix (Mobile Native feel) */
+    .cl-userButtonPopoverCard {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      width: calc(100vw - 2rem) !important;
+      max-width: 400px !important;
+      border-radius: 2rem !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Modal Backdrop for Clerk User Button on Mobile */
+    .cl-popover-open::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 49;
     }
   }
 }
