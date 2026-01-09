@@ -3,14 +3,23 @@ import { useEffect } from 'react';
 
 export const SmoothScroll = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
+    // Disable smooth scroll on mobile/touch devices - native scrolling is better
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || 
+                          window.matchMedia('(hover: none)').matches ||
+                          'ontouchstart' in window ||
+                          navigator.maxTouchPoints > 0;
+
+    // Skip Lenis on mobile - causes jitter and fights with native scroll
+    if (isTouchDevice) {
+      return;
+    }
+
     const lenis = new Lenis({
-      lerp: 0.1, // Smoother linear interpolation for 60fps feel
+      lerp: 0.08, // Slightly smoother for desktop
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      syncTouch: false,
-      touchMultiplier: 2,
     });
 
     let rafId: number;
