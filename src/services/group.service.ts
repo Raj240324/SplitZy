@@ -146,6 +146,11 @@ export const addExpenseService = async (groupId: string, expense: Omit<Expense, 
         createdAt: Date.now()
     };
     
+    // Sanitize: Firestore rejects undefined values, so we must remove them
+    Object.keys(newExpense).forEach(key => 
+        (newExpense as any)[key] === undefined && delete (newExpense as any)[key]
+    );
+    
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         expenses: arrayUnion(newExpense)
     });
