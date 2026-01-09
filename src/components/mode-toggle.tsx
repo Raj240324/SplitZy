@@ -10,6 +10,9 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { useTheme } from "@/components/theme-provider"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -62,6 +65,12 @@ export function ModeToggle() {
           <div><ToggleIcon /></div>
         </DialogTrigger>
         <DialogContent className="w-[calc(100%-2rem)] max-w-sm p-2 overflow-hidden rounded-[2.5rem] border-border bg-background/95 backdrop-blur-xl shadow-2xl">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Appearance Settings</DialogTitle>
+            <DialogDescription>
+              Choose between light, dark, or system theme modes.
+            </DialogDescription>
+          </DialogHeader>
           <ThemeOptions />
         </DialogContent>
       </Dialog>

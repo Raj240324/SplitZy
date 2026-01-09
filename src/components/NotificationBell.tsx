@@ -12,6 +12,7 @@ import {
   DialogTrigger,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -114,6 +115,12 @@ export const NotificationBell = () => {
           <div><BellIcon /></div>
         </DialogTrigger>
         <DialogContent className="w-[calc(100%-2rem)] max-w-sm p-0 overflow-hidden rounded-[2.5rem] border-border bg-background/95 backdrop-blur-xl shadow-2xl">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Notifications</DialogTitle>
+            <DialogDescription>
+              View your latest account activity and split alerts.
+            </DialogDescription>
+          </DialogHeader>
           <NotificationList />
         </DialogContent>
       </Dialog>
