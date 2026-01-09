@@ -33,6 +33,8 @@ const LoadingFallback = () => (
 );
 
 import { SmoothScroll } from "./components/SmoothScroll";
+import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -41,6 +43,8 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ScrollToTop />
+          <ScrollToTopButton />
           
           <SmoothScroll>
             <Suspense fallback={<LoadingFallback />}>
