@@ -19,8 +19,7 @@ import Statistics from '@/components/Statistics';
 import ActivityFeed from '@/components/ActivityFeed';
 import { useToast } from '@/hooks/use-toast';
 import { exportToCSV, getCurrencySymbol } from '@/utils/export';
-import { generateId } from '@/utils/storage';
-import { useGroup, useGroups } from '@/hooks/useGroups';
+import { useGroup, useGroups } from '@/hooks/use-firestore';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -75,7 +74,7 @@ const GroupDetail = () => {
   }, [group]);
 
   const handleAddExpense = (expense: Expense) => {
-    const { id, createdAt, ...rest } = expense;
+    const { id, ...rest } = expense;
     addExpense(rest);
     setShowAddExpense(false);
   };

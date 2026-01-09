@@ -1,58 +1,72 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Expense } from '@/types';
-import { generateId } from '@/utils/storage';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Expense } from "@/types";
 
 interface AddExpenseModalProps {
   open: boolean;
   onClose: () => void;
   members: string[];
-  onSave: (expense: Expense) => void;
+  onSave: (expense: Omit<Expense, "id">) => void;
 }
 
 const categories = [
-  { value: 'groceries', label: 'Groceries' },
-  { value: 'transport', label: 'Transport' },
-  { value: 'lodging', label: 'Lodging' },
-  { value: 'dining', label: 'Dining' },
-  { value: 'other', label: 'Other' }
+  { value: "groceries", label: "Groceries" },
+  { value: "transport", label: "Transport" },
+  { value: "lodging", label: "Lodging" },
+  { value: "dining", label: "Dining" },
+  { value: "other", label: "Other" },
 ];
 
-const AddExpenseModal = ({ open, onClose, members, onSave }: AddExpenseModalProps) => {
-  const [amount, setAmount] = useState('');
-  const [title, setTitle] = useState('');
-  const [paidBy, setPaidBy] = useState('');
-  const [category, setCategory] = useState<string>('other');
+const AddExpenseModal = ({
+  open,
+  onClose,
+  members,
+  onSave,
+}: AddExpenseModalProps) => {
+  const [amount, setAmount] = useState("");
+  const [title, setTitle] = useState("");
+  const [paidBy, setPaidBy] = useState("");
+  const [category, setCategory] = useState<Expense["category"]>("other");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const numAmount = parseFloat(amount);
     if (!title.trim() || isNaN(numAmount) || numAmount <= 0 || !paidBy) return;
 
-    const expense: Expense = {
-      id: generateId(),
+    onSave({
       title: title.trim(),
       amount: numAmount,
       paidBy,
       splitAmong: members,
-      category: category as Expense['category'],
-      createdAt: Date.now()
-    };
+      category,
+      createdAt: Date.now(),
+    });
 
-    onSave(expense);
     handleClose();
   };
 
   const handleClose = () => {
-    setAmount('');
-    setTitle('');
-    setPaidBy('');
-    setCategory('other');
+    setAmount("");
+    setTitle("");
+    setPaidBy("");
+    setCategory("other");
     onClose();
   };
 
@@ -65,8 +79,9 @@ const AddExpenseModal = ({ open, onClose, members, onSave }: AddExpenseModalProp
             Log a new expense to track who paid and how it's split.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+          {/* Amount */}
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <div className="relative">
@@ -86,6 +101,7 @@ const AddExpenseModal = ({ open, onClose, members, onSave }: AddExpenseModalProp
             </div>
           </div>
 
+          {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Input
@@ -97,14 +113,18 @@ const AddExpenseModal = ({ open, onClose, members, onSave }: AddExpenseModalProp
             />
           </div>
 
+          {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Label>Category</Label>
+<Select
+  value={category}
+  onValueChange={(value) => setCategory(value as Expense["category"])}
+>
               <SelectTrigger className="h-12">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(cat => (
+                {categories.map((cat) => (
                   <SelectItem key={cat.value} value={cat.value}>
                     {cat.label}
                   </SelectItem>
@@ -113,14 +133,15 @@ const AddExpenseModal = ({ open, onClose, members, onSave }: AddExpenseModalProp
             </Select>
           </div>
 
+          {/* Paid By */}
           <div className="space-y-2">
-            <Label htmlFor="paidBy">Paid by</Label>
+            <Label>Paid by</Label>
             <Select value={paidBy} onValueChange={setPaidBy}>
               <SelectTrigger className="h-12">
                 <SelectValue placeholder="Who paid?" />
               </SelectTrigger>
               <SelectContent>
-                {members.map(member => (
+                {members.map((member) => (
                   <SelectItem key={member} value={member}>
                     {member}
                   </SelectItem>

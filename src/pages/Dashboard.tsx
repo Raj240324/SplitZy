@@ -5,7 +5,7 @@ import { Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Group } from '@/types';
-import { getGroups } from '@/utils/storage';
+import { listenGroups } from "@/services/group.service";
 import { getTotalExpenses, calculateMemberBalances, formatCurrency } from '@/utils/calculations';
 import CreateGroupModal from '@/components/CreateGroupModal';
 import JoinGroupModal from '@/components/JoinGroupModal';
@@ -33,19 +33,12 @@ const Dashboard = () => {
   const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
-    if (userId) {
-      setGroups(getGroups(userId));
-    } else {
-      setGroups([]);
-    }
-  }, [userId]);
+  if (!userId) return;
 
+  const unsub = listenGroups(userId, setGroups);
+  return () => unsub();
+}, [userId]);
 
-  const refreshGroups = () => {
-    if (userId) {
-      setGroups(getGroups(userId));
-    }
-  };
 
   const getBalanceStatus = (group: Group, currentUser: string = 'You') => {
     if (group.expenses.length === 0) return { type: 'settled', text: 'No expenses yet' };
@@ -181,12 +174,13 @@ const Dashboard = () => {
           )}
         </div>
 
-        <CreateGroupModal 
-          open={showCreateModal} 
-          onClose={() => setShowCreateModal(false)}
-          onCreated={refreshGroups}
-          userId={userId}
-        />
+       <CreateGroupModal 
+  open={showCreateModal} 
+  onClose={() => setShowCreateModal(false)}
+  onCreated={() => setShowCreateModal(false)}
+  userId={userId}
+/>
+
         
         <JoinGroupModal
           open={showJoinModal}

@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { getGroupByShareCode } from '@/utils/storage';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { getGroupByShareCode } from '@/hooks/use-firestore';
+import { joinGroupByShareCode } from "@/services/group.service";
 
 interface JoinGroupModalProps {
   open: boolean;
@@ -14,47 +15,49 @@ interface JoinGroupModalProps {
 }
 
 const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
-  const [shareCode, setShareCode] = useState('');
+  const [shareCode, setShareCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    if (!userId) return;
+
     const code = shareCode.trim().toUpperCase();
-    if (!code || code.length !== 6) {
+
+    if (code.length !== 6) {
       toast({
-        title: 'Invalid code',
-        description: 'Please enter a valid 6-character share code',
-        variant: 'destructive',
+        title: "Invalid code",
+        description: "Please enter a valid 6-character share code",
+        variant: "destructive",
       });
       return;
     }
 
-    setIsLoading(true);
-    
-    // Simulate a small delay for UX
-    setTimeout(() => {
-      const group = getGroupByShareCode(code, userId);
-      
-      if (group) {
-        toast({
-          title: 'Group found!',
-          description: `Joined "${group.name}" successfully`,
-        });
-        onClose();
-        setShareCode('');
-        navigate(`/group/${group.id}`);
-      } else {
-        toast({
-          title: 'Group not found',
-          description: 'No group found with this share code. Please check and try again.',
-          variant: 'destructive',
-        });
-      }
+    try {
+      setIsLoading(true);
+
+      await joinGroupByShareCode(code, userId);
+
+      toast({
+        title: "Joined group",
+        description: "You have successfully joined the group",
+      });
+
+      setShareCode("");
+      onClose();
+      navigate("/dashboard");
+    } catch (err: any) {
+      toast({
+        title: "Join failed",
+        description: err?.message || "Unable to join group",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   return (
@@ -63,15 +66,16 @@ const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
         <DialogHeader>
           <DialogTitle>Join a Group</DialogTitle>
           <DialogDescription>
-            Enter a unique share code to join an existing squad.
+            Enter the share code to join an existing group.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="share-code">Share Code</Label>
             <Input
               id="share-code"
-              placeholder="Enter 6-character code"
+              placeholder="ABC123"
               value={shareCode}
               onChange={(e) => setShareCode(e.target.value.toUpperCase())}
               maxLength={6}
@@ -79,16 +83,26 @@ const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
               autoComplete="off"
             />
             <p className="text-sm text-muted-foreground">
-              Ask the group creator for the share code
+              Ask the group creator for the 6-character code
             </p>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1" disabled={isLoading || shareCode.length !== 6}>
-              {isLoading ? 'Joining...' : 'Join Group'}
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={isLoading || shareCode.length !== 6}
+            >
+              {isLoading ? "Joining..." : "Join Group"}
             </Button>
           </div>
         </form>
