@@ -76,7 +76,20 @@ const AddExpenseModal = ({
     e.preventDefault();
 
     const numAmount = parseFloat(amount);
-    if (!title.trim() || isNaN(numAmount) || numAmount <= 0 || !paidBy) return;
+
+    
+    if (!title.trim()) {
+      toast({ title: "Missing details", description: "Please enter a description", variant: "destructive" });
+      return;
+    }
+    if (isNaN(numAmount) || numAmount <= 0) {
+      toast({ title: "Invalid amount", description: "Please enter a valid amount", variant: "destructive" });
+      return;
+    }
+    if (!paidBy) {
+      toast({ title: "Missing payer", description: "Please select who paid", variant: "destructive" });
+      return;
+    }
 
     let finalSplitDetails: Record<string, number> | undefined = undefined;
     if (splitType === 'custom') {
