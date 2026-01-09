@@ -57,7 +57,7 @@ export const Header = () => {
               </Button>
             </SignedOut>
             <SignedIn>
-              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary transition-colors hidden xs:flex" asChild>
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary transition-colors flex" asChild>
                 <NavLink to="/settings">
                   <SettingsIcon className="w-4 h-4 sm:w-5 h-5" />
                 </NavLink>
