@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -37,7 +36,10 @@ export const NotificationBell = () => {
           </Button>
         )}
       </div>
-      <ScrollArea className={cn("h-[400px]", isMobile && "h-[60vh]")}>
+      <div className={cn(
+        "overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20",
+        isMobile ? "max-h-[70vh]" : "h-[400px]"
+      )}>
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground p-8 text-center">
             <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-4">
@@ -90,7 +92,7 @@ export const NotificationBell = () => {
             ))}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 
