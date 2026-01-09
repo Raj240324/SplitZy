@@ -282,6 +282,9 @@
       max-width: 400px !important;
       border-radius: 2rem !important;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+      background: hsl(var(--background) / 0.85) !important;
+      backdrop-filter: blur(16px) saturate(180%) !important;
+      border: 1px solid hsl(var(--border) / 0.5) !important;
     }
 
     /* Modal Backdrop for Clerk User Button on Mobile */
