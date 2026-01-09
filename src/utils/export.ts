@@ -36,16 +36,6 @@ export const formatDate = (timestamp: number): string => {
   });
 };
 
-export const getCurrencySymbol = (): string => {
-  const currency = localStorage.getItem('splitzy_currency') || 'INR';
-  const symbols: Record<string, string> = {
-    INR: '₹',
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    AUD: 'A$',
-    CAD: 'C$'
-  };
-  return symbols[currency] || '₹';
-};
+import { getCurrencySymbol } from '@/utils/calculations';
+
+export { getCurrencySymbol };

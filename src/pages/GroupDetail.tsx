@@ -317,11 +317,11 @@ const GroupDetail = () => {
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <div className="flex items-center">
-              <TabsList className="bg-muted/50 p-1 rounded-full h-11 border border-border/50 flex w-full">
-                <TabsTrigger value="expenses" className="flex-1 px-2 sm:px-5 py-2 text-fluid-xs font-black uppercase tracking-widest rounded-full data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all">Expenses</TabsTrigger>
-                <TabsTrigger value="balances" className="flex-1 px-2 sm:px-5 py-2 text-fluid-xs font-black uppercase tracking-widest rounded-full data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all">Balances</TabsTrigger>
-                <TabsTrigger value="statistics" className="flex-1 px-2 sm:px-5 py-2 text-fluid-xs font-black uppercase tracking-widest rounded-full data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all">Charts</TabsTrigger>
-                <TabsTrigger value="activity" className="flex-1 px-2 sm:px-5 py-2 text-fluid-xs font-black uppercase tracking-widest rounded-full data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all">History</TabsTrigger>
+              <TabsList className="bg-muted/50 p-1.5 rounded-[2rem] h-auto min-h-12 border border-border/50 flex w-full">
+                <TabsTrigger value="expenses" className="flex-1 px-1 sm:px-4 py-2.5 text-fluid-xs font-black uppercase tracking-widest rounded-[1.5rem] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Expenses</TabsTrigger>
+                <TabsTrigger value="balances" className="flex-1 px-1 sm:px-4 py-2.5 text-fluid-xs font-black uppercase tracking-widest rounded-[1.5rem] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Balances</TabsTrigger>
+                <TabsTrigger value="statistics" className="flex-1 px-1 sm:px-4 py-2.5 text-fluid-xs font-black uppercase tracking-widest rounded-[1.5rem] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Charts</TabsTrigger>
+                <TabsTrigger value="activity" className="flex-1 px-1 sm:px-4 py-2.5 text-fluid-xs font-black uppercase tracking-widest rounded-[1.5rem] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">History</TabsTrigger>
               </TabsList>
             </div>
 

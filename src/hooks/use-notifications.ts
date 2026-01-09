@@ -4,7 +4,8 @@ import { AppNotification } from '@/types';
 import { 
   listenToUserNotifications, 
   markNotificationAsRead, 
-  markAllAsRead 
+  markAllAsRead,
+  deleteNotification
 } from '@/services/notification.service';
 import { toast } from 'sonner';
 
@@ -48,5 +49,6 @@ export const useNotifications = () => {
     unreadCount,
     markAsRead: markNotificationAsRead,
     markAllAsRead: () => userId && markAllAsRead(userId),
+    deleteNotification
   };
 };

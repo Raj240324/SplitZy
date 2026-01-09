@@ -84,7 +84,7 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="rounded-2xl min-w-[120px] bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl"
+        className="min-w-[120px] bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl"
       >
         <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2 font-medium cursor-pointer">
           <Sun className="w-3.5 h-3.5" /> Light

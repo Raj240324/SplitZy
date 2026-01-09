@@ -79,7 +79,7 @@ const CreateGroupModal = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto px-4 sm:px-6">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto px-4 sm:px-6 rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-xl">
             Create New Group

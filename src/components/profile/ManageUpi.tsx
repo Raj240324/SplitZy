@@ -141,22 +141,22 @@ export const ManageUpi = () => {
               )}
               
               {profile?.upiIds.map((upi) => (
-                <div key={upi.id} className="flex items-center justify-between p-3 border rounded-lg bg-card/50">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-medium">{upi.vpa}</span>
-                      {upi.isPrimary && <Badge variant="secondary" className="text-xs">Primary</Badge>}
+                <div key={upi.id} className="flex items-center justify-between p-3 border rounded-lg bg-card/50 overflow-hidden gap-2">
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono font-medium truncate text-sm sm:text-base">{upi.vpa}</span>
+                      {upi.isPrimary && <Badge variant="secondary" className="text-[10px] px-1.5 h-5 flex-shrink-0">Primary</Badge>}
                     </div>
-                    <span className="text-xs text-muted-foreground">{upi.label}</span>
+                    <span className="text-xs text-muted-foreground truncate">{upi.label}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     {!upi.isPrimary && (
-                      <Button variant="ghost" size="sm" onClick={() => handleSetPrimary(upi.id)} title="Set as Primary">
+                      <Button variant="ghost" size="sm" onClick={() => handleSetPrimary(upi.id)} title="Set as Primary" className="h-8 w-8 p-0">
                         <Star className="w-4 h-4 text-muted-foreground hover:text-yellow-500" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="sm" onClick={() => handleRemove(upi.id)} title="Remove">
-                      <Trash2 className="w-4 h-4 text-destructive opacity-70 hover:opacity-100" />
+                    <Button variant="ghost" size="sm" onClick={() => handleRemove(upi.id)} title="Remove" className="h-8 w-8 p-0 text-destructive/70 hover:text-destructive hover:bg-destructive/10">
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

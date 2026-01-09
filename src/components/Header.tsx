@@ -1,11 +1,19 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, ChevronLeft } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NotificationBell } from "./NotificationBell";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isRootPage = ['/', '/dashboard'].includes(location.pathname);
+  const isAuthPage = location.pathname.startsWith('/sign-in') || location.pathname.startsWith('/sign-up');
+  const showBackButton = !isRootPage && !isAuthPage;
+
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const lenis = (window as any).lenis;
@@ -19,20 +27,32 @@ export const Header = () => {
   return (
     <div className="fixed top-2 md:top-4 left-0 right-0 z-50 px-2 md:px-4 pointer-events-none">
       <header className="container mx-auto max-w-6xl h-14 bg-background/70 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.12)] rounded-full flex items-center justify-between px-3 md:px-6 pointer-events-auto transition-all hover:border-primary/30 text-foreground">
-        <NavLink to="/" className="flex items-center gap-2 group transition-transform active:scale-95">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain relative transition-transform group-hover:rotate-12" />
-          </div>
-          <div className="flex items-baseline gap-0.5 group-hover:tracking-tight transition-all duration-500 whitespace-nowrap">
-            <span className="font-medium text-sm sm:text-lg tracking-tighter text-foreground">
-              Split
-            </span>
-            <span className="brand-text brand-glitch text-lg sm:text-2xl !italic !font-black" data-text="Zy">
-              Zy
-            </span>
-          </div>
-        </NavLink>
+        <div className="flex items-center gap-1 sm:gap-2">
+          {showBackButton && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate(-1)} 
+              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 -ml-1 sm:-ml-2 text-muted-foreground hover:text-foreground"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </Button>
+          )}
+          <NavLink to="/" className="flex items-center gap-2 group transition-transform active:scale-95">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-7 w-7 sm:h-8 sm:w-8 object-contain relative transition-transform group-hover:rotate-12" />
+            </div>
+            <div className="flex items-baseline gap-0.5 group-hover:tracking-tight transition-all duration-500 whitespace-nowrap">
+              <span className="font-medium text-sm sm:text-lg tracking-tighter text-foreground">
+                Split
+              </span>
+              <span className="brand-text brand-glitch text-lg sm:text-2xl !italic !font-black" data-text="Zy">
+                Zy
+              </span>
+            </div>
+          </NavLink>
+        </div>
 
         <div className="flex items-center gap-1 sm:gap-4">
           <nav className="hidden md:flex items-center gap-1">

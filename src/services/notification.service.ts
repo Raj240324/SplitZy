@@ -10,7 +10,8 @@ import {
   onSnapshot, 
   serverTimestamp,
   writeBatch,
-  getDocs
+  getDocs,
+  deleteDoc
 } from 'firebase/firestore';
 import { AppNotification } from '@/types';
 
@@ -78,6 +79,14 @@ export const listenToUserNotifications = (
       id: doc.id,
       ...doc.data({ serverTimestamps: 'estimate' }),
     })) as AppNotification[];
-    callback(notifications);
   });
+};
+
+export const deleteNotification = async (notificationId: string) => {
+  try {
+    const notificationRef = doc(db, 'notifications', notificationId);
+    await deleteDoc(notificationRef);
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+  }
 };

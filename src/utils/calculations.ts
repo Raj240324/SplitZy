@@ -1,7 +1,39 @@
 import { Expense, MemberBalance } from '@/types';
 
+// Helper to get currency symbol (centralized)
+export const getCurrencySymbol = (): string => {
+  if (typeof window === 'undefined') return '₹';
+  const currency = localStorage.getItem('splitzy_currency') || 'INR';
+  const symbols: Record<string, string> = {
+    INR: '₹',
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    AUD: 'A$',
+    CAD: 'C$'
+  };
+  return symbols[currency] || '₹';
+};
+
 export const formatCurrency = (amount: number): string => {
-  return `₹${Math.abs(amount).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  const symbol = getCurrencySymbol();
+  const currency = typeof window !== 'undefined' ? localStorage.getItem('splitzy_currency') || 'INR' : 'INR';
+  
+  // Map currency to locale for proper formatting
+  const locales: Record<string, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE', // or en-IE, de-DE uses comma for decimals
+    GBP: 'en-GB',
+    JPY: 'ja-JP',
+    AUD: 'en-AU',
+    CAD: 'en-CA'
+  };
+
+  const locale = locales[currency] || 'en-US';
+  
+  return `${symbol}${Math.abs(amount).toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 };
 
 export const calculateMemberBalances = (expenses: Expense[], members: string[]): MemberBalance[] => {

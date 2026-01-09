@@ -1,4 +1,4 @@
-import { Bell, Check, Inbox } from 'lucide-react';
+import { Bell, Check, Inbox, Trash2 } from 'lucide-react';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +19,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const NotificationBell = () => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const isMobile = useIsMobile();
 
   const NotificationList = () => (
@@ -65,7 +65,7 @@ export const NotificationBell = () => {
                     "mt-1 w-2 h-2 rounded-full flex-shrink-0 transition-all",
                     notification.read ? "bg-transparent" : "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]"
                   )} />
-                  <div className="space-y-1 pr-2">
+                  <div className="space-y-1 pr-8 flex-1">
                     <p className={cn(
                       "text-xs leading-tight tracking-tight",
                       notification.read ? "text-foreground/70 font-medium" : "text-foreground font-black"
@@ -82,11 +82,25 @@ export const NotificationBell = () => {
                     </p>
                   </div>
                 </div>
-                {!notification.read && (
+                {!notification.read ? (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
                       <Check className="w-3 h-3 text-primary" />
                     </div>
+                  </div>
+                ) : (
+                  <div className="absolute right-4 top-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                     <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
+                        onClick={(e) => {
+                           e.stopPropagation();
+                           deleteNotification(notification.id);
+                        }}
+                     >
+                       <Trash2 className="w-3 h-3" />
+                     </Button>
                   </div>
                 )}
               </div>
@@ -133,7 +147,7 @@ export const NotificationBell = () => {
         <div><BellIcon /></div>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-80 p-0 overflow-hidden rounded-3xl border-border bg-background/95 backdrop-blur-xl shadow-2xl" 
+        className="w-80 p-0 overflow-hidden border-border bg-background/95 backdrop-blur-xl shadow-2xl" 
         align="end" 
         sideOffset={12}
         collisionPadding={20}

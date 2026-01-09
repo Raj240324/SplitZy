@@ -9,23 +9,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import MemberAvatar from "./MemberAvatar";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Expense } from "@/types";
+import { 
+  Receipt, 
+  Utensils, 
+  Car, 
+  Home, 
+  ShoppingBag,
+  HelpCircle,
+  ChevronDown, 
+  Wallet,
+  Users,
+  X
+} from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface AddExpenseModalProps {
   open: boolean;
@@ -36,11 +43,11 @@ interface AddExpenseModalProps {
 }
 
 const categories = [
-  { value: "groceries", label: "Groceries" },
-  { value: "transport", label: "Transport" },
-  { value: "lodging", label: "Lodging" },
-  { value: "dining", label: "Dining" },
-  { value: "other", label: "Other" },
+  { value: "groceries", label: "Groceries", icon: ShoppingBag },
+  { value: "transport", label: "Transport", icon: Car },
+  { value: "lodging", label: "Lodging", icon: Home },
+  { value: "dining", label: "Dining", icon: Utensils },
+  { value: "other", label: "Other", icon: HelpCircle },
 ];
 
 const AddExpenseModal = ({
@@ -58,25 +65,37 @@ const AddExpenseModal = ({
   const [splitDetails, setSplitDetails] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  // Sync initialData to state when modal opens or initialData changes
+  // Sync initialData to state
   useEffect(() => {
-    if (open && initialData) {
-      if (initialData.amount) setAmount(initialData.amount);
-      if (initialData.title) setTitle(initialData.title);
-    }
     if (open) {
+      if (initialData) {
+        if (initialData.amount) setAmount(initialData.amount);
+        if (initialData.title) setTitle(initialData.title);
+      }
+      // Reset or init splits
       const initial: Record<string, string> = {};
       members.forEach(m => initial[m] = "");
       setSplitDetails(initial);
       setSplitType('equal');
+      
+      // Auto-select "You" if available and not set
+      if (members.includes("You") && !paidBy) {
+        setPaidBy("You");
+      }
+    } else {
+        // Reset when closed
+        setAmount("");
+        setTitle("");
+        setPaidBy("");
+        setCategory("other");
     }
   }, [open, initialData, members]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const numAmount = parseFloat(amount);
-
     
     if (!title.trim()) {
       toast({ title: "Missing details", description: "Please enter a description", variant: "destructive" });
@@ -87,7 +106,7 @@ const AddExpenseModal = ({
       return;
     }
     if (!paidBy) {
-      toast({ title: "Missing payer", description: "Please select who paid", variant: "destructive" });
+      toast({ title: "Who paid?", description: "Please select who paid for this", variant: "destructive" });
       return;
     }
 
@@ -123,178 +142,227 @@ const AddExpenseModal = ({
       splitDetails: finalSplitDetails
     });
 
-    handleClose();
-  };
-
-  const handleClose = () => {
-    setAmount("");
-    setTitle("");
-    setPaidBy("");
-    setCategory("other");
     onClose();
   };
 
+  const SelectedCategoryIcon = categories.find(c => c.value === category)?.icon || HelpCircle;
+  const isFormValid = parseFloat(amount) > 0 && !!paidBy && !!title.trim();
+
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto px-4 sm:px-6">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Add Expense</DialogTitle>
-          <DialogDescription>
-            Log a new expense to track who paid and how it's split.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Amount */}
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
-                ₹
-              </span>
-              <Input
-                id="amount"
-                type="number"
-                placeholder="0"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="h-14 text-2xl font-semibold pl-8"
-                min="0"
-                step="0.01"
-              />
-            </div>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="p-0 gap-0 sm:max-w-md bg-background overflow-hidden flex flex-col h-[95vh] sm:h-auto sm:max-h-[85vh] rounded-t-[1.5rem] sm:rounded-3xl border-0 sm:border [&>button]:hidden">
+        
+        {/* Sticky Header */}
+        <div className="px-6 py-4 flex items-center justify-between border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
+          <div>
+            <DialogTitle className="text-xl font-black tracking-tight">Add Expense</DialogTitle>
+            <DialogDescription className="text-xs font-medium text-muted-foreground mt-0.5">
+              Track who paid and how it's split
+            </DialogDescription>
           </div>
+          <DialogPrimitive.Close className="rounded-full p-2 bg-muted/50 hover:bg-muted transition-colors">
+             <X className="w-4 h-4 text-foreground/70" />
+          </DialogPrimitive.Close>
+        </div>
 
-          {/* Title */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Input
-              id="description"
-              placeholder="e.g., Dinner at restaurant"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="h-12"
-            />
-          </div>
-
-          {/* Category */}
-          <div className="space-y-2">
-            <Label>Category</Label>
-            <Select
-              value={category}
-              onValueChange={(value) => setCategory(value as Expense["category"])}
-            >
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Paid By */}
-          <div className="space-y-2">
-            <Label>Paid by</Label>
-            <Select value={paidBy} onValueChange={setPaidBy}>
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Who paid?" />
-              </SelectTrigger>
-              <SelectContent>
-                {members.map((member) => (
-                  <SelectItem key={member} value={member}>
-                    {member}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Split Mode */}
-          <div className="space-y-3 pb-2 pt-1">
-            <Label className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Split Strategy</Label>
-            <div className="flex p-1 bg-muted rounded-2xl gap-1">
-              <Button
-                type="button"
-                variant={splitType === 'equal' ? 'secondary' : 'ghost'}
-                className={cn(
-                  "flex-1 rounded-xl h-10 font-black text-fluid-xs uppercase tracking-widest transition-all",
-                  splitType === 'equal' && "bg-background shadow-md text-primary"
-                )}
-                onClick={() => setSplitType('equal')}
-              >
-                Split Equally
-              </Button>
-              <Button
-                type="button"
-                variant={splitType === 'custom' ? 'secondary' : 'ghost'}
-                className={cn(
-                  "flex-1 rounded-xl h-10 font-black text-fluid-xs uppercase tracking-widest transition-all",
-                  splitType === 'custom' && "bg-background shadow-md text-primary"
-                )}
-                onClick={() => setSplitType('custom')}
-              >
-                Custom Split
-              </Button>
-            </div>
-          </div>
-
-          {/* Custom Split Inputs */}
-          {splitType === 'custom' && (
-            <div className="space-y-3 p-4 bg-muted/30 rounded-3xl border border-border/50 animate-in fade-in slide-in-from-top-2">
-              <p className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Individual Shares</p>
-              {members.map(member => (
-                <div key={member} className="flex items-center gap-3">
-                  <div className="flex-1 flex items-center gap-2">
-                    <MemberAvatar name={member} size="xs" className="ring-1 ring-border" />
-                    <span className="text-fluid-sm font-bold truncate">{member}</span>
-                  </div>
-                  <div className="relative w-28">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-fluid-xs text-muted-foreground font-bold">₹</span>
+        <div className="flex-1 overflow-y-auto scrollbar-thin px-6 py-6 pb-24">
+          <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-8">
+            
+            {/* Amount Section (Hero) */}
+            <div className="space-y-4 text-center">
+              <Label className="sr-only">Amount</Label>
+              <div className="flex justify-center items-center gap-1">
+                 <span className="text-4xl sm:text-5xl font-black text-muted-foreground/40">₹</span>
+                 <Input
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="h-auto py-2 text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/20 min-w-[1ch] text-left"
+                  style={{ width: `${Math.max(amount.length, 1) + (amount.includes('.') ? 0 : 0)}ch` }}
+                  autoFocus
+                  min="0"
+                  step="0.01"
+                 />
+              </div>
+              
+              <div className="max-w-[280px] mx-auto">
+                 <div className="relative group">
+                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                       <Receipt className="h-4 w-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                    </div>
                     <Input
-                      type="number"
-                      placeholder="0"
-                      value={splitDetails[member] || ''}
-                      onChange={(e) => setSplitDetails({ ...splitDetails, [member]: e.target.value })}
-                      className="h-8 pl-5 text-right font-black text-xs rounded-xl"
+                      placeholder="What is this for?"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="pl-9 h-12 rounded-2xl bg-muted/30 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-medium placeholder:font-normal"
                     />
-                  </div>
-                </div>
-              ))}
-              <div className="pt-3 border-t border-border/50 mt-1 flex justify-between items-center">
-                <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Split Sum</span>
-                <span className={cn(
-                  "text-xs font-black",
-                  Math.abs(Object.values(splitDetails).reduce((sum, v) => sum + (parseFloat(v) || 0), 0) - (parseFloat(amount) || 0)) < 0.01 
-                    ? "text-primary" 
-                    : "text-destructive"
-                )}>
-                  ₹{Object.values(splitDetails).reduce((sum, v) => sum + (parseFloat(v) || 0), 0).toFixed(2)}
+                 </div>
+              </div>
+            </div>
+
+            {/* Config Grid */}
+            <div className="grid grid-cols-2 gap-4">
+               {/* Category Select */}
+               <div className="space-y-2">
+                 <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Category</Label>
+                 <Select value={category} onValueChange={(v) => setCategory(v as any)}>
+                   <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-transparent hover:bg-muted/50 focus:ring-0 gap-2 px-3">
+                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <SelectedCategoryIcon className="w-4 h-4" />
+                     </div>
+                     <span className="font-semibold truncate flex-1 text-left">
+                       {categories.find(c => c.value === category)?.label}
+                     </span>
+                   </SelectTrigger>
+                   <SelectContent>
+                     {categories.map((cat) => (
+                       <SelectItem key={cat.value} value={cat.value}>
+                         <div className="flex items-center gap-2">
+                            <cat.icon className="w-4 h-4 opacity-50" />
+                            <span>{cat.label}</span>
+                         </div>
+                       </SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+
+               {/* Paid By Select */}
+               <div className="space-y-2">
+                 <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Paid By</Label>
+                 <Select value={paidBy} onValueChange={setPaidBy}>
+                   <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-transparent hover:bg-muted/50 focus:ring-0 gap-2 px-3">
+                      {paidBy ? (
+                        <MemberAvatar name={paidBy} size="sm" className="w-8 h-8" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-muted-foreground/10 flex items-center justify-center shrink-0">
+                           <Wallet className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                      )}
+                     <span className={cn("font-semibold truncate flex-1 text-left", !paidBy && "text-muted-foreground font-normal")}>
+                       {paidBy || "Who paid?"}
+                     </span>
+                   </SelectTrigger>
+                   <SelectContent>
+                     {members.map((m) => (
+                       <SelectItem key={m} value={m}>
+                         <div className="flex items-center gap-2">
+                            <MemberAvatar name={m} size="xs" />
+                            <span>{m}</span>
+                         </div>
+                       </SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+            </div>
+
+            {/* Split Strategy Divider */}
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border/50" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground font-black tracking-widest">
+                  Split Strategy
                 </span>
               </div>
             </div>
-          )}
 
-          {splitType === 'equal' && (
-            <div className="bg-muted/50 rounded-2xl p-4 text-fluid-sm font-bold text-muted-foreground flex items-center justify-between border border-border/50">
-              <span>Split equally among members</span>
-              <span className="text-primary font-black">₹{amount ? (parseFloat(amount) / members.length).toFixed(2) : '0.00'} / each</span>
+            {/* Split Toggle */}
+            <div className="bg-muted/30 p-1.5 rounded-[1.5rem] flex gap-1">
+               <button
+                 type="button"
+                 onClick={() => setSplitType('equal')}
+                 className={cn(
+                   "flex-1 py-3 px-4 rounded-[1.2rem] text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2",
+                   splitType === 'equal' 
+                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                     : "text-muted-foreground hover:bg-muted/50"
+                 )}
+               >
+                 <Users className="w-4 h-4" />
+                 Split Equally
+               </button>
+               <button
+                 type="button"
+                 onClick={() => setSplitType('custom')}
+                 className={cn(
+                   "flex-1 py-3 px-4 rounded-[1.2rem] text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2",
+                   splitType === 'custom' 
+                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                     : "text-muted-foreground hover:bg-muted/50"
+                 )}
+               >
+                 <Receipt className="w-4 h-4" />
+                 Custom Split
+               </button>
             </div>
-          )}
 
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={handleClose} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1">
-              Save Expense
-            </Button>
-          </div>
-        </form>
+            {/* Equal Split Info */}
+            {splitType === 'equal' && (
+              <div className="text-center p-4 bg-primary/5 rounded-3xl border border-primary/10">
+                <p className="text-sm font-medium text-muted-foreground">Everyone pays</p>
+                <p className="text-2xl font-black text-primary mt-1">
+                   ₹{amount ? (parseFloat(amount) / members.length).toFixed(2) : '0.00'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">per person</p>
+              </div>
+            )}
+
+            {/* Custom Split Inputs */}
+            {splitType === 'custom' && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                  {members.map(member => (
+                    <div key={member} className="flex items-center gap-3 p-2 rounded-2xl hover:bg-muted/30 transition-colors">
+                      <div className="flex-1 flex items-center gap-3 min-w-0">
+                        <MemberAvatar name={member} size="sm" className="ring-2 ring-background shadow-sm" />
+                        <span className="font-bold text-sm truncate">{member}</span>
+                      </div>
+                      <div className="relative w-28 shrink-0">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">₹</span>
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          value={splitDetails[member] || ''}
+                          onChange={(e) => setSplitDetails({ ...splitDetails, [member]: e.target.value })}
+                          className="h-10 pl-7 text-right font-bold rounded-xl bg-background border-border/60 focus:border-primary/50"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Total Check */}
+                  <div className="flex justify-between items-center px-4 py-3 bg-muted/50 rounded-2xl mt-2">
+                     <span className="text-xs font-black uppercase tracking-wider text-muted-foreground">Total</span>
+                     <span className={cn(
+                        "font-black font-mono",
+                        Math.abs(Object.values(splitDetails).reduce((sum, v) => sum + (parseFloat(v) || 0), 0) - (parseFloat(amount) || 0)) < 0.01 
+                        ? "text-primary" 
+                        : "text-destructive"
+                     )}>
+                        ₹{Object.values(splitDetails).reduce((sum, v) => sum + (parseFloat(v) || 0), 0).toFixed(2)}
+                     </span>
+                  </div>
+                </div>
+            )}
+
+          </form>
+        </div>
+
+        {/* Sticky Footer */}
+        <div className="p-4 bg-background/80 backdrop-blur-xl border-t border-border/40 absolute bottom-0 left-0 right-0 z-20">
+          <Button 
+            form="add-expense-form" 
+            type="submit" 
+            disabled={!isFormValid}
+            className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-[0.98]"
+          >
+            Add Expense
+          </Button>
+        </div>
+
       </DialogContent>
     </Dialog>
   );

@@ -62,7 +62,7 @@ const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl">
         <DialogHeader>
           <DialogTitle>Join a Group</DialogTitle>
           <DialogDescription>
