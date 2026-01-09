@@ -246,9 +246,9 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
             filteredExpenses.map(expense => {
               const Icon = categoryIcons[expense.category];
               const colorClass = categoryColors[expense.category];
-              const yourShare = expense.splitAmong.includes(currentUser)
-                ? expense.amount / expense.splitAmong.length
-                : 0;
+              const yourShare = expense.splitType === 'custom' && expense.splitDetails
+                ? (expense.splitDetails[currentUser] || 0)
+                : (expense.splitAmong.includes(currentUser) ? expense.amount / expense.splitAmong.length : 0);
 
               return (
                 <div key={expense.id} className="p-4 space-y-3 hover:bg-muted/30 transition-colors">
@@ -321,9 +321,9 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
                 filteredExpenses.map(expense => {
                   const Icon = categoryIcons[expense.category];
                   const colorClass = categoryColors[expense.category];
-                  const yourShare = expense.splitAmong.includes(currentUser)
-                    ? expense.amount / expense.splitAmong.length
-                    : 0;
+                  const yourShare = expense.splitType === 'custom' && expense.splitDetails
+                    ? (expense.splitDetails[currentUser] || 0)
+                    : (expense.splitAmong.includes(currentUser) ? expense.amount / expense.splitAmong.length : 0);
 
                   return (
                     <tr key={expense.id} className="hover:bg-muted/30 transition-colors">

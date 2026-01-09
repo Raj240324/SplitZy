@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Plus, CheckCircle, Trash2, X, Share2, Download, Printer, Settings } from 'lucide-react';
+import { ChevronRight, Plus, CheckCircle, Trash2, X, Share2, Download, Printer, Settings, Smartphone, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Group, Expense } from '@/types';
@@ -324,6 +325,7 @@ const GroupDetail = () => {
               <BalanceView
                 balances={balances}
                 totalSpend={totalSpend}
+                memberUpiIds={group.memberUpiIds}
               />
             </TabsContent>
 
@@ -360,6 +362,43 @@ const GroupDetail = () => {
                     >
                       Save
                     </Button>
+                  </div>
+                </div>
+
+                {/* UPI IDs Management */}
+                <div className="bg-card/50 backdrop-blur-sm rounded-3xl border border-border/50 p-6 shadow-sm">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Smartphone className="w-4 h-4 text-primary" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Settlement Setup</p>
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-xs text-muted-foreground mb-4">Add UPI IDs to enable one-tap payments in the balances tab.</p>
+                    {group.members.map((member) => (
+                      <div key={`upi-${member}`} className="flex flex-col gap-2">
+                        <Label className="text-xs font-bold ml-1">{member}'s UPI ID</Label>
+                        <div className="flex gap-2">
+                          <input
+                            defaultValue={group.memberUpiIds?.[member] || ''}
+                            placeholder="e.g., name@okaxis"
+                            className="flex h-11 w-full rounded-2xl border border-input bg-background/50 px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            onBlur={(e) => {
+                              const newUpi = e.target.value.trim();
+                              if (newUpi !== (group.memberUpiIds?.[member] || '')) {
+                                updateGroup({
+                                  memberUpiIds: {
+                                    ...(group.memberUpiIds || {}),
+                                    [member]: newUpi
+                                  }
+                                });
+                              }
+                            }}
+                          />
+                          <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-primary/10 text-primary">
+                            <Check className="w-4 h-4 opacity-50" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -481,6 +520,7 @@ const GroupDetail = () => {
           balances={balances}
           onSettle={handleSettlement}
           getCurrencySymbol={getCurrencySymbol}
+          memberUpiIds={group.memberUpiIds}
         />
       </div>
     </div>

@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { MemberBalance } from '@/types';
-import { Check, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight, Smartphone } from 'lucide-react';
+import { generateUpiLink } from '@/utils/payment';
 import { useToast } from '@/hooks/use-toast';
 import MemberAvatar from './MemberAvatar';
 
@@ -17,9 +18,10 @@ interface SettleUpModalProps {
   balances: MemberBalance[];
   onSettle: (settlement: Settlement) => void;
   getCurrencySymbol: () => string;
+  memberUpiIds?: Record<string, string>;
 }
 
-const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol }: SettleUpModalProps) => {
+const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, memberUpiIds }: SettleUpModalProps) => {
   const { toast } = useToast();
 
   // Calculate simplified settlements
@@ -119,9 +121,20 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol }:
                       <span className="font-bold text-primary">
                         {getCurrencySymbol()}{settlement.amount.toFixed(2)}
                       </span>
+                      {memberUpiIds?.[settlement.to] && (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="h-8 w-8 p-0 rounded-xl bg-primary shadow-lg shadow-primary/20"
+                          onClick={() => window.location.href = generateUpiLink(memberUpiIds![settlement.to], settlement.to, settlement.amount)}
+                        >
+                          <Smartphone className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
+                        className="h-8 w-8 p-0 rounded-xl"
                         onClick={() => handleSettle(settlement)}
                       >
                         <Check className="w-4 h-4" />

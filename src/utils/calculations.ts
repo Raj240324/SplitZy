@@ -15,19 +15,26 @@ export const calculateMemberBalances = (expenses: Expense[], members: string[]):
   });
 
   expenses.forEach(expense => {
-    const splitAmount = expense.amount / expense.splitAmong.length;
-    
     // Who paid
     if (paid[expense.paidBy] !== undefined) {
       paid[expense.paidBy] += expense.amount;
     }
     
     // Who owes
-    expense.splitAmong.forEach(member => {
-      if (owed[member] !== undefined) {
-        owed[member] += splitAmount;
-      }
-    });
+    if (expense.splitType === 'custom' && expense.splitDetails) {
+      Object.entries(expense.splitDetails).forEach(([member, customAmount]) => {
+        if (owed[member] !== undefined) {
+          owed[member] += customAmount;
+        }
+      });
+    } else {
+      const splitAmount = expense.amount / expense.splitAmong.length;
+      expense.splitAmong.forEach(member => {
+        if (owed[member] !== undefined) {
+          owed[member] += splitAmount;
+        }
+      });
+    }
   });
 
   // Calculate net balances
@@ -89,6 +96,9 @@ export const getMemberShare = (expenses: Expense[], member: string): number => {
   return expenses
     .filter(e => e.type !== 'settlement')
     .reduce((sum, e) => {
+      if (e.splitType === 'custom' && e.splitDetails) {
+        return sum + (e.splitDetails[member] || 0);
+      }
       if (e.splitAmong.includes(member)) {
         return sum + (e.amount / e.splitAmong.length);
       }

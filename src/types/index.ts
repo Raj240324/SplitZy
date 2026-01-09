@@ -3,6 +3,7 @@ export interface Group {
   name: string;
   currency?: string;
   members: string[];
+  memberUpiIds?: Record<string, string>; // memberName -> UPI ID
   expenses: Expense[];
   createdAt: number;
   shareCode: string;
@@ -20,6 +21,8 @@ export interface Expense {
   notes?: string;
   type?: 'expense' | 'settlement';
   settledWith?: string;
+  splitType?: 'equal' | 'custom';
+  splitDetails?: Record<string, number>; // memberName -> amount
 }
 
 export interface MemberBalance {
