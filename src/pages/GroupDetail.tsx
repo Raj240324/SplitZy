@@ -38,6 +38,7 @@ import ScanBillModal from '@/components/ScanBillModal';
 import { ScanLine } from 'lucide-react';
 
 import { useUser } from '@clerk/clerk-react';
+import { SettlementCard } from '@/components/payment/SettlementCard';
 
 
 const GroupDetail = () => {
@@ -115,8 +116,8 @@ const GroupDetail = () => {
     }
   };
 
-  const handleSettlement = (settlement: { from: string; to: string; amount: number }) => {
-    recordSettlement(settlement);
+  const handleSettlement = (settlement: { from: string; to: string; amount: number }, options?: { method?: 'upi' | 'cash' | 'other'; status?: 'pending' | 'completed' }) => {
+    recordSettlement(settlement, options);
     setShowSettleModal(false);
   };
 
@@ -189,7 +190,12 @@ const GroupDetail = () => {
   const yourShare = getMemberShare(group.expenses, 'You');
   const balances = calculateMemberBalances(group.expenses, group.members);
   const yourBalance = balances.find(b => b.member === 'You');
+
   const isSettled = !yourBalance || Math.abs(yourBalance.netBalance) < 0.01;
+
+  const pendingSettlements = group.expenses.filter(
+    e => e.type === 'settlement' && (e.paymentStatus === 'pending')
+  );
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-12">
@@ -250,6 +256,7 @@ const GroupDetail = () => {
               </Button>
             </div>
             
+
             <div className="grid grid-cols-2 gap-3">
               <Button variant="outline" className="h-10 sm:h-11 gap-1.5 sm:gap-2 text-fluid-xs font-black uppercase tracking-[0.15em] rounded-xl border-border/50" onClick={() => setShowSettleModal(true)}>
                 <CheckCircle className="w-3 h-3 sm:w-3.5 h-3.5 text-emerald-500" />
@@ -261,6 +268,21 @@ const GroupDetail = () => {
               </Button>
             </div>
           </div>
+
+          {/* Pending Settlements */}
+          {pendingSettlements.length > 0 && (
+            <div className="mb-6 animate-in slide-in-from-top-4 duration-500">
+               <h3 className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground mb-3">Pending Confirmations</h3>
+               {pendingSettlements.map(settlement => (
+                 <SettlementCard 
+                    key={settlement.id} 
+                    settlement={settlement} 
+                    currentUserName="You" // Logic needed here for actual user name if possible, or assume 'You' maps to local user
+                    groupId={group.id}
+                 />
+               ))}
+            </div>
+          )}
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">

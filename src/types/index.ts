@@ -1,26 +1,49 @@
+export interface UpiId {
+  id: string;
+  vpa: string; // Virtual Payment Address
+  label: string; // e.g., "GPay", "Personal"
+  isPrimary: boolean;
+}
+
+export interface UserProfile {
+  id: string; // Maps to Auth ID
+  email?: string;
+  displayName: string;
+  photoURL?: string;
+  upiIds: UpiId[];
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface Group {
   id: string;
   name: string;
   currency?: string;
-  members: string[];
-  memberUpiIds?: Record<string, string>; // memberName -> UPI ID
+  members: string[]; // Array of member NAMES (display purposes)
+  memberUpiIds?: Record<string, string>; // Legacy support: memberName -> UPI ID
   expenses: Expense[];
   createdAt: number;
   shareCode: string;
   activities?: Activity[];
+  userIds?: string[]; // Array of Auth UIDs for security/querying
 }
 
 export interface Expense {
   id: string;
   title: string;
   amount: number;
-  paidBy: string;
-  splitAmong: string[];
-  category: 'groceries' | 'transport' | 'lodging' | 'dining' | 'other';
+  paidBy: string; // Name of payer
+  splitAmong: string[]; // Names of people sharing
+  category: 'groceries' | 'transport' | 'lodging' | 'dining' | 'settlement' | 'other';
   createdAt: number;
   notes?: string;
   type?: 'expense' | 'settlement';
-  settledWith?: string;
+  // Settlement specific fields
+  settledWith?: string; // Name of receiver
+  paymentStatus?: 'pending' | 'completed' | 'failed';
+  paymentMethod?: 'upi' | 'cash' | 'other';
+  transactionId?: string;
+  
   splitType?: 'equal' | 'custom';
   splitDetails?: Record<string, number>; // memberName -> amount
 }

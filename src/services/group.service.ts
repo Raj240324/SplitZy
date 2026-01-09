@@ -203,6 +203,40 @@ export const deleteExpenseService = async (groupId: string, expense: Expense) =>
     await addActivity(groupId, 'expense_deleted', `Expense "${expense.title}" deleted`, expense.paidBy);
 };
 
+export const updateSettlementStatus = async (groupId: string, expenseId: string, status: 'confirmed' | 'failed', actorName: string) => {
+    const groupDoc = await getDoc(doc(db, GROUPS_COLLECTION, groupId));
+    if (!groupDoc.exists()) return;
+
+    const groupData = groupDoc.data() as Group;
+    const expenseIndex = groupData.expenses.findIndex(e => e.id === expenseId);
+
+    if (expenseIndex === -1) return;
+
+    const expense = groupData.expenses[expenseIndex];
+    const updatedExpenses = [...groupData.expenses];
+    updatedExpenses[expenseIndex] = {
+        ...expense,
+        paymentStatus: status === 'confirmed' ? 'completed' : 'failed'
+    };
+
+    await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
+        expenses: updatedExpenses
+    });
+
+    const action = status === 'confirmed' ? 'confirmed' : 'rejected';
+    await addActivity(groupId, 'settlement', `Settlement from ${expense.paidBy} was ${action} by ${actorName}`);
+
+    // Notify the payer
+    // Ideally we need the Payer's UserID. Since we only have name here (legacy issue), we will notify everyone or try to find ID?
+    // For now, let's notify the group with a specific message that targets the payer by name in the text.
+    await notifyGroup(
+        groupId, 
+        `Payment ${status === 'confirmed' ? 'Confirmed' : 'Rejected'}`, 
+        `${actorName} has ${action} the payment from ${expense.paidBy}`, 
+        'settlement'
+    );
+};
+
 export const addMemberService = async (groupId: string, name: string) => {
     await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
         members: arrayUnion(name)

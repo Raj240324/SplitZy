@@ -35,6 +35,7 @@ import {
 
 import { Moon, Sun, Trash2, Info } from "lucide-react";
 import { listenGroups, deleteGroup } from "@/services/group.service";
+import { ManageUpi } from "@/components/profile/ManageUpi";
 
 const currencies = [
   { value: "INR", label: "₹ Indian Rupee (INR)" },
@@ -148,6 +149,9 @@ const Settings = () => {
             />
           </CardContent>
         </Card>
+
+        {/* UPI Management */}
+        <ManageUpi />
 
         {/* Preferences */}
         <Card>

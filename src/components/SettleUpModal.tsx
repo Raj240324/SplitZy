@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { MemberBalance } from '@/types';
+import { PaymentModal } from './payment/PaymentModal';
 import { Check, ArrowRight, Smartphone } from 'lucide-react';
 import { generateUpiLink } from '@/utils/payment';
 import { useToast } from '@/hooks/use-toast';
@@ -16,13 +18,16 @@ interface SettleUpModalProps {
   open: boolean;
   onClose: () => void;
   balances: MemberBalance[];
-  onSettle: (settlement: Settlement) => void;
+  onSettle: (settlement: Settlement, options?: { method?: 'upi' | 'cash' | 'other'; status?: 'pending' | 'completed' }) => void;
   getCurrencySymbol: () => string;
   memberUpiIds?: Record<string, string>;
 }
 
 const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, memberUpiIds }: SettleUpModalProps) => {
   const { toast } = useToast();
+
+  const [selectedSettlement, setSelectedSettlement] = useState<Settlement | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   // Calculate simplified settlements
   const calculateSettlements = (): Settlement[] => {
@@ -67,95 +72,137 @@ const SettleUpModal = ({ open, onClose, balances, onSettle, getCurrencySymbol, m
 
   const settlements = calculateSettlements();
 
-  const handleSettle = (settlement: Settlement) => {
-    onSettle(settlement);
+  // Legacy fast settle (Manual/Cash)
+  const handleManualSettle = (settlement: Settlement) => {
+    // For manual/cash, we also mark as pending to ensure receiver confirms receipt
+    onSettle({ ...settlement }, { method: 'cash', status: 'pending' }); 
     toast({
       title: 'Settlement recorded',
-      description: `${settlement.from} paid ${getCurrencySymbol()}${settlement.amount.toFixed(2)} to ${settlement.to}`,
+      description: `Waiting for confirmation from ${settlement.to}`,
     });
+  };
+
+  const initiatePayment = (settlement: Settlement) => {
+    setSelectedSettlement(settlement);
+    setIsPaymentModalOpen(true);
+  };
+
+  const calculatePayment = (method: 'upi' | 'cash') => {
+    if (!selectedSettlement) return;
+    
+    // Mark as pending for receiver confirmation
+    onSettle(selectedSettlement, { method: method, status: 'pending' });
+    
+    toast({
+      title: method === 'upi' ? 'Payment Initiated' : 'Settlement Recorded',
+      description: `Waiting for confirmation from ${selectedSettlement.to}`,
+    });
+    setIsPaymentModalOpen(false);
   };
 
   const allSettled = settlements.length === 0;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Settle Up</DialogTitle>
-          <DialogDescription>
-            Record payments to balance the squad's books.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          {allSettled ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-semibold text-lg">All Settled!</h3>
-              <p className="text-muted-foreground text-sm mt-1">
-                Everyone is square. No payments needed.
-              </p>
-            </div>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground">
-                Here's the simplest way to settle all balances:
-              </p>
-              
-              <div className="space-y-3">
-                {settlements.map((settlement, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-2">
-                      <MemberAvatar name={settlement.from} size="sm" />
-                      <span className="font-medium text-sm">{settlement.from}</span>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      <MemberAvatar name={settlement.to} size="sm" />
-                      <span className="font-medium text-sm">{settlement.to}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-primary">
-                        {getCurrencySymbol()}{settlement.amount.toFixed(2)}
-                      </span>
-                      {memberUpiIds?.[settlement.to] && (
-                        <Button
-                          size="sm"
-                          variant="default"
-                          className="h-8 w-8 p-0 rounded-xl bg-primary shadow-lg shadow-primary/20"
-                          onClick={() => window.location.href = generateUpiLink(memberUpiIds![settlement.to], settlement.to, settlement.amount)}
-                        >
-                          <Smartphone className="w-4 h-4" />
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0 rounded-xl"
-                        onClick={() => handleSettle(settlement)}
-                      >
-                        <Check className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <p className="text-xs text-muted-foreground">
-                Click the check button when a payment is made to record it.
-              </p>
-            </>
-          )}
+    <>
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Settle Up</DialogTitle>
+            <DialogDescription>
+              Record payments to balance the squad's books.
+            </DialogDescription>
+          </DialogHeader>
           
-          <Button variant="outline" onClick={onClose} className="w-full">
-            Close
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+          <div className="space-y-4">
+            {allSettled ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg">All Settled!</h3>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Everyone is square. No payments needed.
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Here's the simplest way to settle all balances:
+                </p>
+                
+                <div className="space-y-3">
+                  {settlements.map((settlement, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-2">
+                        <MemberAvatar name={settlement.from} size="sm" />
+                        <span className="font-medium text-sm">{settlement.from}</span>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                        <MemberAvatar name={settlement.to} size="sm" />
+                        <span className="font-medium text-sm">{settlement.to}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-primary">
+                          {getCurrencySymbol()}{settlement.amount.toFixed(2)}
+                        </span>
+                        
+                        {/* If receiver has UPI, show Pay button, else show Manual Settle */}
+                        {memberUpiIds?.[settlement.to] ? (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="h-8 w-8 p-0 rounded-xl bg-primary shadow-lg shadow-primary/20"
+                            onClick={() => initiatePayment(settlement)}
+                            title="Pay via UPI"
+                          >
+                            <Smartphone className="w-4 h-4" />
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0 rounded-xl"
+                            onClick={() => handleManualSettle(settlement)}
+                            title="Mark Paid Manually"
+                          >
+                            <Check className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <p className="text-xs text-muted-foreground">
+                  Click the phone icon to pay via UPI, or check mark for manual cash settlement.
+                </p>
+              </>
+            )}
+            
+            <Button variant="outline" onClick={onClose} className="w-full">
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {selectedSettlement && (
+        <PaymentModal 
+          open={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          fromUser={{ name: selectedSettlement.from }}
+          toUser={{ 
+            name: selectedSettlement.to, 
+            upiId: memberUpiIds?.[selectedSettlement.to] 
+          }}
+          amount={selectedSettlement.amount}
+          currencySymbol={getCurrencySymbol()}
+          onPaymentComplete={calculatePayment}
+        />
+      )}
+    </>
   );
 };
 

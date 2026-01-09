@@ -103,7 +103,7 @@ export const useGroup = (groupId: string) => {
      }
   };
 
-  const recordSettlement = async (settlement: { from: string; to: string; amount: number }) => {
+  const recordSettlement = async (settlement: { from: string; to: string; amount: number }, options?: { method?: 'upi' | 'cash' | 'other'; status?: 'pending' | 'completed' }) => {
       if (!group) return;
       const newSettlement: Omit<Expense, 'id'> = {
           title: `Settlement: ${settlement.from} -> ${settlement.to}`,
@@ -113,7 +113,9 @@ export const useGroup = (groupId: string) => {
           category: 'other',
           createdAt: Date.now(),
           type: 'settlement',
-          settledWith: settlement.to
+          settledWith: settlement.to,
+          paymentStatus: options?.status || 'pending',
+          paymentMethod: options?.method || 'other',
       };
       
       try {
