@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,17 @@ interface JoinGroupModalProps {
   open: boolean;
   onClose: () => void;
   userId?: string;
+  initialCode?: string;
 }
 
-const JoinGroupModal = ({ open, onClose, userId }: JoinGroupModalProps) => {
-  const [shareCode, setShareCode] = useState("");
+const JoinGroupModal = ({ open, onClose, userId, initialCode = "" }: JoinGroupModalProps) => {
+  const [shareCode, setShareCode] = useState(initialCode);
+
+  useEffect(() => {
+    if (open) {
+      setShareCode(initialCode);
+    }
+  }, [open, initialCode]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Link as LinkIcon, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -12,18 +12,40 @@ interface ShareGroupModalProps {
 }
 
 const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModalProps) => {
-  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
   const { toast } = useToast();
 
-  const handleCopy = async () => {
+  const baseUrl = window.location.origin;
+  const inviteLink = `${baseUrl}/join?code=${shareCode}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopiedLink(true);
+      toast({
+        title: 'Link Copied!',
+        description: 'Invite link copied to clipboard',
+      });
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      toast({
+        title: 'Failed to copy',
+        description: 'Please copy the link manually',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText(shareCode);
-      setCopied(true);
+      setCopiedCode(true);
       toast({
-        title: 'Copied!',
+        title: 'Code Copied!',
         description: 'Share code copied to clipboard',
       });
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopiedCode(false), 2000);
     } catch {
       toast({
         title: 'Failed to copy',
@@ -34,11 +56,15 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
   };
 
   const handleShareMessage = async () => {
-    const message = `Join my expense group "${groupName}" on SplitZy!\n\nShare code: ${shareCode}`;
+    const message = `Join my expense group "${groupName}" on SplitZy!\n\n${inviteLink}\n\nGroup Code: ${shareCode}`;
     
     if (navigator.share) {
       try {
-        await navigator.share({ text: message });
+        await navigator.share({ 
+          title: `Join ${groupName} on SplitZy`,
+          text: message,
+          url: inviteLink
+        });
       } catch {
         // User cancelled or error
       }
@@ -46,40 +72,65 @@ const ShareGroupModal = ({ open, onClose, groupName, shareCode }: ShareGroupModa
       await navigator.clipboard.writeText(message);
       toast({
         title: 'Copied!',
-        description: 'Share message copied to clipboard',
+        description: 'Full invite message copied',
       });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md rounded-3xl">
         <DialogHeader>
-          <DialogTitle>Share Group</DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight">Share Group</DialogTitle>
           <DialogDescription>
             Invite others to join "{groupName}" to start splitting expenses together.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Share this code with others so they can join "{groupName}"
-          </p>
-          
-          <div className="flex items-center justify-center gap-2">
-            <div className="bg-muted rounded-lg px-6 py-4 text-3xl font-mono tracking-widest font-bold">
-              {shareCode}
+        <div className="space-y-6 pt-4">
+          {/* Invite Link Section */}
+          <div className="space-y-2">
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Invite Link</p>
+            <div className="flex items-center gap-2 p-1.5 bg-muted/50 rounded-2xl border border-border/50">
+              <div className="flex-1 px-3 py-2 text-sm font-medium truncate opacity-70">
+                {inviteLink}
+              </div>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={handleCopyLink}
+                className="rounded-xl h-9 px-3 gap-2 font-bold"
+              >
+                {copiedLink ? <Check className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
+                {copiedLink ? "Copied" : "Copy Link"}
+              </Button>
             </div>
-            <Button variant="outline" size="icon" onClick={handleCopy}>
-              {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-            </Button>
+          </div>
+          
+          {/* Share Code Section */}
+          <div className="space-y-2">
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Group Code</p>
+            <div className="flex items-center justify-between gap-2 p-4 bg-primary/5 rounded-3xl border border-primary/10">
+              <div className="text-3xl font-mono tracking-[0.3em] font-black text-primary ml-2">
+                {shareCode}
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleCopyCode}
+                className="h-12 w-12 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all"
+              >
+                {copiedCode ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+              </Button>
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+            <Button variant="outline" onClick={onClose} className="flex-1 rounded-2xl h-12 font-bold">
               Close
             </Button>
-            <Button onClick={handleShareMessage} className="flex-1">
-              Share Invite
+            <Button onClick={handleShareMessage} className="flex-1 rounded-2xl h-12 font-bold gap-2">
+              <Share2 className="w-4 h-4" />
+              Send Invite
             </Button>
           </div>
         </div>

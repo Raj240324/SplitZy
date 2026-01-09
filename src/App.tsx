@@ -53,6 +53,7 @@ const App = () => (
                 <Route path="/sign-in/*" element={<SignInPage />} />
                 <Route path="/sign-up/*" element={<SignUpPage />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/join" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />

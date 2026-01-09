@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import { Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,12 +36,14 @@ const groupColors = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get('code');
   const { user } = useUser();
   const userId = user?.id;
 
   const [groups, setGroups] = useState<Group[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(!!inviteCode);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteGroupId, setDeleteGroupId] = useState<string | null>(null);
   const { deleteGroup } = useGroups();
@@ -166,6 +168,7 @@ const Dashboard = () => {
           open={showJoinModal}
           onClose={() => setShowJoinModal(false)}
           userId={userId}
+          initialCode={inviteCode || undefined}
         />
 
         <AlertDialog open={!!deleteGroupId} onOpenChange={() => setDeleteGroupId(null)}>
