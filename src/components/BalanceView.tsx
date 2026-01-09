@@ -74,7 +74,7 @@ const BalanceView = ({ balances, totalSpend, memberUpiIds }: BalanceViewProps) =
                           <Button 
                             variant="default" 
                             size="sm" 
-                            className="h-8 text-[10px] font-black uppercase tracking-widest gap-1.5 rounded-xl shadow-lg shadow-primary/20"
+                            className="h-8 text-fluid-xs font-black uppercase tracking-widest gap-1.5 rounded-xl shadow-lg shadow-primary/20"
                             onClick={() => window.location.href = generateUpiLink(memberUpiIds[debt.member], debt.member, debt.amount)}
                           >
                             <Smartphone className="w-3 h-3" />

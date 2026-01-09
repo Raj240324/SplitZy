@@ -22,7 +22,7 @@ export const Header = () => {
         <NavLink to="/" className="flex items-center gap-2 group transition-transform active:scale-95">
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            <img src="/logo.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain relative transition-transform group-hover:rotate-12" />
+            <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain relative transition-transform group-hover:rotate-12" />
           </div>
           <div className="flex items-baseline gap-0.5 group-hover:tracking-tight transition-all duration-500 whitespace-nowrap">
             <span className="font-medium text-sm sm:text-lg tracking-tighter text-foreground">
@@ -36,10 +36,10 @@ export const Header = () => {
 
         <div className="flex items-center gap-1 sm:gap-4">
           <nav className="hidden md:flex items-center gap-1">
-            <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full" asChild>
+            <Button variant="ghost" size="sm" className="text-fluid-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full" asChild>
               <a href="#how-it-works" onClick={(e) => scrollToSection(e, 'how-it-works')}>How it Works</a>
             </Button>
-            <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full" asChild>
+            <Button variant="ghost" size="sm" className="text-fluid-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full" asChild>
               <a href="#faq" onClick={(e) => scrollToSection(e, 'faq')}>FAQ</a>
             </Button>
           </nav>

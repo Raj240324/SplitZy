@@ -73,19 +73,19 @@ const Landing = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span className="text-[10px] font-black tracking-[0.2em] text-primary-foreground/60 uppercase">100% Free Forever</span>
+                <span className="text-fluid-xs font-black tracking-[0.2em] text-primary-foreground/60 uppercase">100% Free Forever</span>
               </div>
               
-              <h1 className="text-5xl sm:text-6xl md:text-8xl font-black mb-6 md:mb-8 tracking-[-0.04em] leading-[0.95] text-white">
+              <h1 className="text-fluid-hero font-black mb-6 md:mb-8 tracking-[-0.04em] text-white">
                 Less stress. <br /> 
                 <span className="brand-text brand-glitch italic pb-2 block" data-text="More vibes.">
                   More vibes.
                 </span>
               </h1>
               
-              <p className="text-lg md:text-2xl text-slate-400 mb-8 md:mb-12 max-w-lg leading-relaxed font-light tracking-tight">
+              <p className="text-fluid-body-lg text-slate-400 mb-8 md:mb-12 max-w-lg leading-relaxed font-light tracking-tight">
                 <span className="whitespace-nowrap">
-                  <span className="font-bold text-white/90">Split</span><span className="brand-text brand-glitch !text-lg mx-0.5" data-text="Zy">Zy</span>
+                  <span className="font-bold text-white/90">Split</span>                  <span className="brand-text brand-glitch !text-fluid-lg mx-0.5" data-text="Zy">Zy</span>
                 </span> uses AI and Firebase to scan receipts and sync expenses in real-time. Roomies, trips, or brunch — we got you, no cap.
               </p>
 
@@ -128,7 +128,7 @@ const Landing = () => {
                 <div className="mt-8 flex items-center gap-3 text-sm text-slate-500">
                   <div className="flex -space-x-2">
                     {[1,2,3].map(i => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400 shadow-sm">
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center text-fluid-xs font-black text-slate-400 shadow-sm">
                         {String.fromCharCode(64 + i)}
                       </div>
                     ))}
@@ -148,15 +148,15 @@ const Landing = () => {
                 </div>
                 <div className="space-y-4">
                   <div className="h-10 w-full bg-white/5 rounded-xl flex items-center px-4 justify-between border border-white/5">
-                     <span className="text-xs font-semibold text-slate-300">Dinner at Main Town</span>
+                     <span className="text-fluid-sm font-semibold text-slate-300">Dinner at Main Town</span>
                      <span className="text-primary font-bold">₹2,400</span>
                   </div>
                   <div className="h-10 w-full bg-white/5 rounded-xl flex items-center px-4 justify-between border border-white/5">
-                     <span className="text-xs font-semibold text-slate-300">Coffee Squad</span>
+                     <span className="text-fluid-sm font-semibold text-slate-300">Coffee Squad</span>
                      <span className="text-primary font-bold">₹450</span>
                   </div>
                   <div className="h-10 w-full bg-white/5 rounded-xl flex items-center px-4 justify-between border border-white/5 opacity-50">
-                     <span className="text-xs font-semibold text-slate-400">Uber Trip</span>
+                     <span className="text-fluid-sm font-semibold text-slate-400">Uber Trip</span>
                      <span className="text-slate-400 font-bold">₹820</span>
                   </div>
                 </div>
@@ -167,18 +167,18 @@ const Landing = () => {
                  <div className="flex items-center gap-3">
                    <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20"><CheckCircle className="w-4 h-4" /></div>
                    <div>
-                     <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Settled Up</p>
-                     <p className="text-xs font-semibold text-white">You get ₹500</p>
+                      <p className="text-fluid-xs font-bold uppercase tracking-wider text-emerald-400">Settled Up</p>
+                      <p className="text-fluid-sm font-semibold text-white">You get ₹500</p>
                    </div>
                  </div>
               </div>
 
               <div className="absolute bottom-[10%] left-[0%] p-4 bg-primary/20 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-xl animate-float animation-delay-2000">
                  <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-black text-white text-xs shadow-lg shadow-primary/20">+</div>
+                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-black text-white text-fluid-xs shadow-lg shadow-primary/20">+</div>
                    <div>
-                     <p className="text-[10px] font-bold uppercase tracking-wider text-primary">New Expense</p>
-                     <p className="text-xs font-semibold text-white">Trip Eras: ₹12,000</p>
+                      <p className="text-fluid-xs font-bold uppercase tracking-wider text-primary">New Expense</p>
+                      <p className="text-fluid-sm font-semibold text-white">Trip Eras: ₹12,000</p>
                    </div>
                  </div>
               </div>
@@ -217,10 +217,10 @@ const Landing = () => {
       <section className="py-32 bg-background dark:bg-slate-950 relative overflow-hidden transition-colors">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-4xl md:text-7xl font-black text-center mb-6 tracking-[-0.03em] text-foreground leading-tight transition-colors">
+          <h2 className="text-fluid-heading font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">
             Built for the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-400 to-fuchsia-400 animate-shimmer">modern world</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-xl leading-relaxed font-light tracking-tight transition-colors">
+          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-fluid-lg leading-relaxed font-light tracking-tight transition-colors">
             Powerful features that make expense splitting effortless.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
@@ -244,8 +244,8 @@ const Landing = () => {
       {/* How It Works */}
       <section id="how-it-works" className="py-32 bg-muted/20 dark:bg-gradient-to-b dark:from-slate-950 dark:to-slate-900 relative transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-7xl font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">How It Works</h2>
-          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-xl font-light tracking-tight transition-colors">
+          <h2 className="text-fluid-heading font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">How It Works</h2>
+          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-fluid-lg font-light tracking-tight transition-colors">
             Three simple steps to fair expense splitting
           </p>
           <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
@@ -272,10 +272,10 @@ const Landing = () => {
       <section className="py-24 bg-background dark:bg-slate-900 overflow-hidden relative transition-colors">
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-5xl font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">
+          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">
             Perfect for <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-500 transition-colors">any situation</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-lg leading-relaxed transition-colors">
+          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
             Whether it's a trip, a party, or daily life.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -298,8 +298,8 @@ const Landing = () => {
       {/* FAQ Section */}
       <section id="faq" className="py-24 bg-muted/10 dark:bg-slate-950 transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">FAQ</h2>
-          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-lg leading-relaxed transition-colors">
+          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">FAQ</h2>
+          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
             Everything you need to know about SplitZy
           </p>
           <div className="max-w-4xl mx-auto">
@@ -322,8 +322,8 @@ const Landing = () => {
       {/* Final CTA */}
       <section className="py-24 bg-gradient-to-br from-primary/10 to-primary/5 border-y border-primary/20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">Split without the drama.</h2>
-          <p className="text-muted-foreground mb-8 md:mb-10 max-w-md md:max-w-xl mx-auto text-base md:text-lg">
+          <h2 className="text-fluid-subheading md:text-fluid-heading font-bold mb-4 md:mb-6">Split without the drama.</h2>
+          <p className="text-muted-foreground mb-8 md:mb-10 max-w-md md:max-w-xl mx-auto text-fluid-body-lg">
             Join the squad and leave the awkward "who owes what" talk behind.
           </p>
           {isSignedIn ? (
@@ -352,7 +352,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain" />
+              <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain" />
               <div className="flex items-baseline gap-0.5">
                 <span className="font-medium text-lg tracking-tighter text-foreground">
                   Split

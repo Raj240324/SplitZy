@@ -67,6 +67,18 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontSize: {
+        // Fluid typography using clamp() for smooth scaling
+        'fluid-xs': ['clamp(0.625rem, 0.58rem + 0.2vw, 0.75rem)', { lineHeight: '1.4' }],
+        'fluid-sm': ['clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)', { lineHeight: '1.5' }],
+        'fluid-base': ['clamp(0.875rem, 0.82rem + 0.25vw, 1rem)', { lineHeight: '1.6' }],
+        'fluid-lg': ['clamp(1rem, 0.9rem + 0.5vw, 1.25rem)', { lineHeight: '1.5' }],
+        'fluid-xl': ['clamp(1.125rem, 1rem + 0.625vw, 1.5rem)', { lineHeight: '1.4' }],
+        'fluid-2xl': ['clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem)', { lineHeight: '1.3' }],
+        'fluid-3xl': ['clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem)', { lineHeight: '1.2' }],
+        'fluid-4xl': ['clamp(1.75rem, 1.3rem + 2.25vw, 3.5rem)', { lineHeight: '1.1' }],
+        'fluid-5xl': ['clamp(2rem, 1.4rem + 3vw, 4.5rem)', { lineHeight: '1' }],
+      },
       keyframes: {
         "accordion-down": {
           from: {
@@ -93,3 +105,4 @@ export default {
   },
   plugins: [animate],
 } satisfies Config;
+

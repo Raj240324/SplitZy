@@ -123,7 +123,7 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
         <div className="p-4 border-b border-border space-y-3">
           {/* Category Filter */}
           <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</span>
+            <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Category</span>
             <div className="overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
               <div className="flex gap-1.5 min-w-max">
                 <Button
@@ -156,7 +156,7 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
           {/* Date Range & Search */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Date Range</span>
+              <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Date Range</span>
               <div className="flex items-center gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -210,13 +210,13 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Search</span>
+                <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Search</span>
                 {hasActiveFilters && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={clearFilters}
-                    className="h-4 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-transparent"
+                    className="h-4 text-fluid-xs font-black uppercase tracking-widest text-primary hover:bg-transparent"
                   >
                     Clear All
                   </Button>
@@ -260,13 +260,13 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
                     <div className="text-right">
                       <p className="font-bold text-lg">{formatCurrency(expense.amount)}</p>
                       {yourShare > 0 && (
-                        <p className="text-[10px] text-muted-foreground">Your share: {formatCurrency(yourShare)}</p>
+                        <p className="text-fluid-xs text-muted-foreground">Your share: {formatCurrency(yourShare)}</p>
                       )}
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium ${colorClass}`}>
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-fluid-xs font-medium ${colorClass}`}>
                       <Icon className="w-3 h-3" />
                       {expense.category.charAt(0).toUpperCase() + expense.category.slice(1)}
                     </span>

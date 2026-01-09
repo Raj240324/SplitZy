@@ -31,7 +31,7 @@ export const NotificationBell = () => {
             variant="ghost" 
             size="sm" 
             onClick={() => markAllAsRead()}
-            className="h-7 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 rounded-full px-3"
+            className="h-7 text-fluid-xs font-black uppercase tracking-widest text-primary hover:bg-primary/10 rounded-full px-3"
           >
             Mark all read
           </Button>
@@ -47,7 +47,7 @@ export const NotificationBell = () => {
               <Inbox className="w-6 h-6 opacity-20" />
             </div>
             <p className="text-sm font-medium tracking-tight">No notifications yet</p>
-            <p className="text-[10px] uppercase font-bold tracking-widest mt-1 opacity-50">Empty Era</p>
+            <p className="text-fluid-xs uppercase font-bold tracking-widest mt-1 opacity-50">Empty Era</p>
           </div>
         ) : (
           <div className="divide-y divide-border/50">
@@ -72,10 +72,10 @@ export const NotificationBell = () => {
                     )}>
                       {notification.title}
                     </p>
-                    <p className="text-[11px] text-muted-foreground leading-snug font-medium line-clamp-2">
+                    <p className="text-fluid-sm text-muted-foreground leading-snug font-medium line-clamp-2">
                       {notification.message}
                     </p>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 pt-1">
+                    <p className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground/50 pt-1">
                       {notification.createdAt 
                         ? formatDistanceToNow(notification.createdAt.toDate(), { addSuffix: true }) 
                         : 'just now'}
@@ -101,7 +101,7 @@ export const NotificationBell = () => {
     <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-primary/5 hover:text-primary transition-colors">
       <Bell className="w-5 h-5" />
       {unreadCount > 0 && (
-        <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-primary text-white text-[10px] font-black rounded-full flex items-center justify-center ring-2 ring-background animate-in zoom-in duration-300">
+        <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-primary text-white text-fluid-xs font-black rounded-full flex items-center justify-center ring-2 ring-background animate-in zoom-in duration-300">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
       )}

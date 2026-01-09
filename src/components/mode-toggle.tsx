@@ -32,7 +32,7 @@ export function ModeToggle() {
   const ThemeOptions = () => (
     <div className="flex flex-col gap-1 p-2">
       <div className="p-3 mb-2 border-b border-border/50">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Appearance</p>
+        <p className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Appearance</p>
       </div>
       <Button 
         variant="ghost" 

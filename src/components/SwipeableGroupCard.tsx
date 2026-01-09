@@ -46,7 +46,7 @@ const SwipeableGroupCard = ({
       <div className="absolute inset-0 bg-destructive flex items-center justify-end px-6 rounded-2xl">
         <div className="flex flex-col items-center gap-1 text-destructive-foreground">
           <Trash2 className="w-6 h-6 animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Delete</span>
+          <span className="text-fluid-xs font-black uppercase tracking-widest">Delete</span>
         </div>
       </div>
 
@@ -84,12 +84,12 @@ const SwipeableGroupCard = ({
           <div className="pt-4 border-t border-border/50 flex justify-between items-center">
             <div className="flex -space-x-2">
               {group.members.slice(0, 3).map((member, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
+                <div key={i} className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-fluid-xs font-bold">
                   {member[0]}
                 </div>
               ))}
               {group.members.length > 3 && (
-                <div className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
+                <div className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-fluid-xs font-bold">
                   +{group.members.length - 3}
                 </div>
               )}
@@ -117,7 +117,7 @@ const SwipeableGroupCard = ({
         className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground/30 sm:hidden"
       >
         <div className="flex items-center gap-1">
-          <span className="text-[8px] font-black uppercase">Swipe</span>
+          <span className="text-fluid-xs font-black uppercase">Swipe</span>
           <Trash2 className="w-3 h-3" />
         </div>
       </motion.div>

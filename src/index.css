@@ -215,6 +215,8 @@
 
 @layer base {
   html {
+    /* Responsive base: 14px at 320px → 16px at 1200px viewport */
+    font-size: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
     scroll-padding-top: 80px; /* Accounts for the floating header */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -311,5 +313,63 @@
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.4);
+  }
+
+  /* === Fluid Typography Utilities === */
+  
+  /* Hero / Display headings: 32px at 320px → 80px at 1200px */
+  .text-fluid-hero {
+    font-size: clamp(2rem, 1.25rem + 3.75vw, 5rem);
+    line-height: 0.95;
+  }
+  
+  /* Section headings: 24px at 320px → 56px at 1200px */
+  .text-fluid-heading {
+    font-size: clamp(1.5rem, 1rem + 2.5vw, 3.5rem);
+    line-height: 1.1;
+  }
+  
+  /* Subheadings: 18px at 320px → 28px at 1200px */
+  .text-fluid-subheading {
+    font-size: clamp(1.125rem, 0.875rem + 1.25vw, 1.75rem);
+    line-height: 1.3;
+  }
+  
+  /* Body large: 16px at 320px → 20px at 1200px */
+  .text-fluid-body-lg {
+    font-size: clamp(1rem, 0.875rem + 0.625vw, 1.25rem);
+    line-height: 1.6;
+  }
+  
+  /* Body default: 14px at 320px → 18px at 1200px */
+  .text-fluid-body {
+    font-size: clamp(0.875rem, 0.75rem + 0.5vw, 1.125rem);
+    line-height: 1.6;
+  }
+  
+  /* Small text: 12px at 320px → 14px at 1200px */
+  .text-fluid-sm {
+    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    line-height: 1.5;
+  }
+  
+  /* Micro text (labels, badges): 10px at 320px → 12px at 1200px */
+  .text-fluid-xs {
+    font-size: clamp(0.625rem, 0.58rem + 0.2vw, 0.75rem);
+    line-height: 1.4;
+  }
+  
+  /* Text overflow protection */
+  .text-safe {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .text-truncate-safe {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
   }
 }

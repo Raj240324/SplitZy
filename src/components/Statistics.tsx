@@ -104,7 +104,7 @@ const Statistics = ({ group }: StatisticsProps) => {
                 <Legend 
                   verticalAlign="bottom" 
                   height={36} 
-                  formatter={(value) => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">{value}</span>}
+                  formatter={(value) => <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground/70">{value}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>

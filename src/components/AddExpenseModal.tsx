@@ -203,13 +203,13 @@ const AddExpenseModal = ({
 
           {/* Split Mode */}
           <div className="space-y-3 pb-2 pt-1">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Split Strategy</Label>
+            <Label className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Split Strategy</Label>
             <div className="flex p-1 bg-muted rounded-2xl gap-1">
               <Button
                 type="button"
                 variant={splitType === 'equal' ? 'secondary' : 'ghost'}
                 className={cn(
-                  "flex-1 rounded-xl h-10 font-black text-[10px] uppercase tracking-widest transition-all",
+                  "flex-1 rounded-xl h-10 font-black text-fluid-xs uppercase tracking-widest transition-all",
                   splitType === 'equal' && "bg-background shadow-md text-primary"
                 )}
                 onClick={() => setSplitType('equal')}
@@ -220,7 +220,7 @@ const AddExpenseModal = ({
                 type="button"
                 variant={splitType === 'custom' ? 'secondary' : 'ghost'}
                 className={cn(
-                  "flex-1 rounded-xl h-10 font-black text-[10px] uppercase tracking-widest transition-all",
+                  "flex-1 rounded-xl h-10 font-black text-fluid-xs uppercase tracking-widest transition-all",
                   splitType === 'custom' && "bg-background shadow-md text-primary"
                 )}
                 onClick={() => setSplitType('custom')}
@@ -233,15 +233,15 @@ const AddExpenseModal = ({
           {/* Custom Split Inputs */}
           {splitType === 'custom' && (
             <div className="space-y-3 p-4 bg-muted/30 rounded-3xl border border-border/50 animate-in fade-in slide-in-from-top-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Individual Shares</p>
+              <p className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Individual Shares</p>
               {members.map(member => (
                 <div key={member} className="flex items-center gap-3">
                   <div className="flex-1 flex items-center gap-2">
                     <MemberAvatar name={member} size="xs" className="ring-1 ring-border" />
-                    <span className="text-[11px] font-bold truncate">{member}</span>
+                    <span className="text-fluid-sm font-bold truncate">{member}</span>
                   </div>
                   <div className="relative w-28">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold">₹</span>
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-fluid-xs text-muted-foreground font-bold">₹</span>
                     <Input
                       type="number"
                       placeholder="0"
@@ -253,7 +253,7 @@ const AddExpenseModal = ({
                 </div>
               ))}
               <div className="pt-3 border-t border-border/50 mt-1 flex justify-between items-center">
-                <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Split Sum</span>
+                <span className="text-fluid-xs font-black uppercase tracking-widest text-muted-foreground">Split Sum</span>
                 <span className={cn(
                   "text-xs font-black",
                   Math.abs(Object.values(splitDetails).reduce((sum, v) => sum + (parseFloat(v) || 0), 0) - (parseFloat(amount) || 0)) < 0.01 
@@ -267,7 +267,7 @@ const AddExpenseModal = ({
           )}
 
           {splitType === 'equal' && (
-            <div className="bg-muted/50 rounded-2xl p-4 text-[11px] font-bold text-muted-foreground flex items-center justify-between border border-border/50">
+            <div className="bg-muted/50 rounded-2xl p-4 text-fluid-sm font-bold text-muted-foreground flex items-center justify-between border border-border/50">
               <span>Split equally among members</span>
               <span className="text-primary font-black">₹{amount ? (parseFloat(amount) / members.length).toFixed(2) : '0.00'} / each</span>
             </div>

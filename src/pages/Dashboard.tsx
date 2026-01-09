@@ -83,7 +83,7 @@ const Dashboard = () => {
         <div className="py-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">Your Groups</h1>
+              <h1 className="text-fluid-2xl font-bold">Your Groups</h1>
               <p className="text-muted-foreground">Manage your shared expenses with friends and family</p>
             </div>
             <div className="flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
