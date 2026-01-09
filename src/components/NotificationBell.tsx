@@ -26,10 +26,11 @@ export const NotificationBell = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[calc(100vw-2.5rem)] sm:w-80 p-0 overflow-hidden rounded-3xl border-border bg-background/95 backdrop-blur-xl shadow-2xl" 
+        className="w-[280px] xs:w-80 p-0 overflow-hidden rounded-3xl border-border bg-background/95 backdrop-blur-xl shadow-2xl" 
         align="end" 
+        alignOffset={-10}
         sideOffset={12}
-        collisionPadding={16}
+        collisionPadding={20}
       >
         <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between">
           <h4 className="text-sm font-black uppercase tracking-widest text-foreground">Notifications</h4>
