@@ -11,6 +11,19 @@ import CreateGroupModal from '@/components/CreateGroupModal';
 import JoinGroupModal from '@/components/JoinGroupModal';
 import { getCurrencySymbol } from '@/utils/export';
 import { Header } from '@/components/Header';
+import SwipeableGroupCard from '@/components/SwipeableGroupCard';
+import { useGroups } from '@/hooks/use-firestore';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from 'lucide-react';
 
 const groupColors = [
   'from-violet-500 to-purple-600',
@@ -30,6 +43,8 @@ const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteGroupId, setDeleteGroupId] = useState<string | null>(null);
+  const { deleteGroup } = useGroups();
   const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
@@ -100,50 +115,15 @@ const Dashboard = () => {
               const color = groupColors[index % groupColors.length];
 
               return (
-                <div
+                <SwipeableGroupCard
                   key={group.id}
+                  group={group}
+                  color={color}
+                  totalExpenses={totalExpenses}
+                  userBalance={userBalance}
                   onClick={() => navigate(`/group/${group.id}`)}
-                  className="group cursor-pointer bg-card rounded-2xl border border-border/50 hover:border-primary/50 hover:shadow-xl transition-all duration-300 overflow-hidden"
-                >
-                  <div className={`h-2 bg-gradient-to-r ${color}`} />
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                        <Users className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Total spent</p>
-                        <p className="text-lg font-bold">{formatCurrency(totalExpenses)}</p>
-                      </div>
-                    </div>
-
-                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">{group.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-6">{group.members.length} members</p>
-
-                    <div className="pt-4 border-t border-border/50 flex justify-between items-center">
-                      <div className="flex -space-x-2">
-                        {group.members.slice(0, 3).map((member, i) => (
-                          <div key={i} className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
-                            {member[0]}
-                          </div>
-                        ))}
-                        {group.members.length > 3 && (
-                          <div className="w-8 h-8 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-bold">
-                            +{group.members.length - 3}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {userBalance && Math.abs(userBalance.netBalance) > 0.01 ? (
-                        <div className={`text-sm font-bold ${userBalance.netBalance > 0 ? 'text-balance-positive' : 'text-balance-negative'}`}>
-                          {userBalance.netBalance > 0 ? 'Gets' : 'Owes'} {formatCurrency(Math.abs(userBalance.netBalance))}
-                        </div>
-                      ) : (
-                        <div className="text-sm font-medium text-muted-foreground italic">Settled</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  onDelete={() => setDeleteGroupId(group.id)}
+                />
               );
             })}
 
@@ -187,6 +167,34 @@ const Dashboard = () => {
           onClose={() => setShowJoinModal(false)}
           userId={userId}
         />
+
+        <AlertDialog open={!!deleteGroupId} onOpenChange={() => setDeleteGroupId(null)}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-black text-xl tracking-tight flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-destructive" />
+                Delete Group?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm font-medium">
+                This will permanently remove the group and all its expenses. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-2xl font-bold">Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => {
+                  if (deleteGroupId) {
+                    deleteGroup(deleteGroupId);
+                    setDeleteGroupId(null);
+                  }
+                }}
+                className="bg-destructive hover:bg-destructive/90 rounded-2xl font-bold"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
