@@ -55,7 +55,7 @@ const EditExpenseModal = ({ open, onClose, expense, members, onSave }: EditExpen
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto px-4 sm:px-6">
         <DialogHeader>
           <DialogTitle>Edit Expense</DialogTitle>
           <DialogDescription>

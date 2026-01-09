@@ -82,7 +82,7 @@ const AddExpenseModal = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto px-4 sm:px-6">
         <DialogHeader>
           <DialogTitle className="text-xl">Add Expense</DialogTitle>
           <DialogDescription>
@@ -90,7 +90,7 @@ const AddExpenseModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Amount */}
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>

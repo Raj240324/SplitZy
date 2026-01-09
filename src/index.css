@@ -252,4 +252,16 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Modal Viewport Fixes */
+  @media (max-width: 640px) {
+    /* Ensure Dialogs don't get lost on small screens with keyboard */
+    div[role="dialog"] {
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: calc(100% - 2rem) !important;
+      margin: 0 auto;
+      max-height: 85vh !important;
+    }
+  }
 }
