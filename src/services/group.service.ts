@@ -139,7 +139,7 @@ export const listenGroups = (userId: string, callback: (groups: Group[]) => void
 };
 
 // Expense Operations
-export const addExpenseService = async (groupId: string, expense: Omit<Expense, 'id'>) => {
+export const addExpenseService = async (groupId: string, expense: Omit<Expense, 'id'>, actorId?: string) => {
     const newExpense = {
         ...expense,
         id: crypto.randomUUID(), 
@@ -167,9 +167,7 @@ export const addExpenseService = async (groupId: string, expense: Omit<Expense, 
     const notificationTitle = isSettlement ? 'Settlement Recorded' : 'New Expense';
     const notificationType = isSettlement ? 'settlement' : 'expense';
     
-    // Note: We don't have actor's Clerk ID here directly, but we can pass it if we update the callers.
-    // For now, it will notify everyone. Ideally callers should pass Clerk ID.
-    await notifyGroup(groupId, notificationTitle, desc, notificationType);
+    await notifyGroup(groupId, notificationTitle, desc, notificationType, actorId);
 
     return newExpense;
 };
@@ -234,6 +232,7 @@ export const updateSettlementStatus = async (groupId: string, expenseId: string,
     // Notify the payer
     // Ideally we need the Payer's UserID. Since we only have name here (legacy issue), we will notify everyone or try to find ID?
     // For now, let's notify the group with a specific message that targets the payer by name in the text.
+    // Notify the payer and the group
     await notifyGroup(
         groupId, 
         `Payment ${status === 'confirmed' ? 'Confirmed' : 'Rejected'}`, 

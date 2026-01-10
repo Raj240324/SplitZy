@@ -6,6 +6,7 @@ import {
 import { db } from '../firebase';
 import { Group, Expense } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@clerk/clerk-react';
 import {
     createGroup,
     deleteGroupService,
@@ -42,6 +43,7 @@ export const useGroup = (groupId: string) => {
   const [group, setGroup] = useState<Group | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   useEffect(() => {
     if (!groupId) {
@@ -68,7 +70,7 @@ export const useGroup = (groupId: string) => {
   const addExpense = async (expenseData: Omit<Expense, 'id'>) => {
     if (!group) return;
     try {
-      await addExpenseService(group.id, expenseData);
+      await addExpenseService(group.id, expenseData, userId || undefined);
       toast({ title: 'Expense added' });
     } catch (error) {
       console.error(error);
@@ -119,7 +121,7 @@ export const useGroup = (groupId: string) => {
       };
       
       try {
-          await addExpenseService(group.id, newSettlement);
+          await addExpenseService(group.id, newSettlement, userId || undefined);
           toast({ title: 'Settlement recorded' });
       } catch (error) {
           console.error(error);

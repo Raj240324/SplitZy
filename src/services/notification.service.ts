@@ -70,8 +70,7 @@ export const listenToUserNotifications = (
 ) => {
   const q = query(
     collection(db, 'notifications'),
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
+    where('userId', '==', userId)
   );
 
   return onSnapshot(q, (snapshot) => {
@@ -79,7 +78,15 @@ export const listenToUserNotifications = (
       id: doc.id,
       ...doc.data({ serverTimestamps: 'estimate' }),
     })) as AppNotification[];
-    callback(notifications);
+    
+    // Sort manually in memory to avoid needing a Firestore composite index
+    const sortedNotifications = notifications.sort((a, b) => {
+      const timeA = (a.createdAt as any)?.toMillis?.() || (typeof a.createdAt === 'number' ? a.createdAt : 0);
+      const timeB = (b.createdAt as any)?.toMillis?.() || (typeof b.createdAt === 'number' ? b.createdAt : 0);
+      return timeB - timeA;
+    });
+    
+    callback(sortedNotifications);
   });
 };
 
