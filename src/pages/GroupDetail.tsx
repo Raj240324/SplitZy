@@ -88,12 +88,13 @@ const GroupDetail = () => {
       try {
         const profile = await getUserProfile(user.id);
         const primaryUpi = profile?.upiIds.find(u => u.isPrimary)?.vpa;
+        const userName = user?.firstName || 'You';
         
-        if (primaryUpi && group.memberUpiIds?.['You'] !== primaryUpi) {
+        if (primaryUpi && group.memberUpiIds?.[userName] !== primaryUpi) {
           updateGroup({
             memberUpiIds: {
               ...(group.memberUpiIds || {}),
-              'You': primaryUpi
+              [userName]: primaryUpi
             }
           });
         }

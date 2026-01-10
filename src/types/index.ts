@@ -73,5 +73,7 @@ export interface AppNotification {
   type: 'expense' | 'group' | 'settlement';
   read: boolean;
   createdAt: any;
+  groupId?: string;
+  link?: string;
 }
 

@@ -19,7 +19,9 @@ export const createNotification = async (
   userId: string, 
   title: string, 
   message: string, 
-  type: AppNotification['type']
+  type: AppNotification['type'],
+  groupId?: string,
+  link?: string
 ) => {
   try {
     await addDoc(collection(db, 'notifications'), {
@@ -29,6 +31,8 @@ export const createNotification = async (
       type,
       read: false,
       createdAt: serverTimestamp(),
+      groupId: groupId || null,
+      link: link || null
     });
   } catch (error) {
     console.error('Error creating notification:', error);

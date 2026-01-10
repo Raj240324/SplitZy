@@ -17,10 +17,12 @@ import {
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 
 export const NotificationBell = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const NotificationList = () => (
     <div className="flex flex-col h-full overflow-hidden">
@@ -54,7 +56,11 @@ export const NotificationBell = () => {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                onClick={() => !notification.read && markAsRead(notification.id)}
+                onClick={() => {
+                  if (!notification.read) markAsRead(notification.id);
+                  if (notification.link) navigate(notification.link);
+                  else if (notification.groupId) navigate(`/group/${notification.groupId}`);
+                }}
                 className={cn(
                   "p-4 cursor-pointer transition-colors hover:bg-muted/50 relative group",
                   !notification.read && "bg-primary/[0.03]"

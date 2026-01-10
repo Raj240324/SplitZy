@@ -78,9 +78,10 @@ const AddExpenseModal = ({
       setSplitDetails(initial);
       setSplitType('equal');
       
-      // Auto-select "You" if available and not set
-      if (members.includes("You") && !paidBy) {
-        setPaidBy("You");
+      // Auto-select "You" or real name if available
+      const myName = members.find(m => m === "You" || m === "Me") || members[0];
+      if (myName && !paidBy) {
+        setPaidBy(myName);
       }
     } else {
         // Reset when closed

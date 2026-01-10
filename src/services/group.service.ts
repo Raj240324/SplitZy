@@ -29,7 +29,14 @@ const notifyGroup = async (groupId: string, title: string, message: string, type
             
             userIds.forEach((userId: string) => {
                 if (userId !== actorId) {
-                    createNotification(userId, title, `${message} in "${groupName}"`, type);
+                    createNotification(
+                        userId, 
+                        title, 
+                        `${message} in "${groupName}"`, 
+                        type,
+                        groupId,
+                        `/group/${groupId}`
+                    );
                 }
             });
         }
