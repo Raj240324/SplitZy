@@ -61,8 +61,14 @@ const Dashboard = () => {
       setGroups(data);
       setIsLoading(false);
     });
+
+    // Clear search params if code is present to prevent modal from showing again on refresh
+    if (inviteCode) {
+      navigate('/dashboard', { replace: true });
+    }
+
     return () => unsub();
-  }, [userId]);
+  }, [userId, inviteCode, navigate]);
 
 
   const getBalanceStatus = (group: Group, currentUser: string = 'You') => {

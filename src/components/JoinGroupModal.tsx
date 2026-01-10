@@ -46,7 +46,7 @@ const JoinGroupModal = ({ open, onClose, userId, initialCode = "" }: JoinGroupMo
     try {
       setIsLoading(true);
 
-      await joinGroupByShareCode(code, userId);
+      const joinedGroup = await joinGroupByShareCode(code, userId);
 
       toast({
         title: "Joined group",
@@ -55,7 +55,11 @@ const JoinGroupModal = ({ open, onClose, userId, initialCode = "" }: JoinGroupMo
 
       setShareCode("");
       onClose();
-      navigate("/dashboard");
+      if (joinedGroup?.id) {
+        navigate(`/group/${joinedGroup.id}`);
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err: any) {
       toast({
         title: "Join failed",

@@ -80,7 +80,12 @@ const BalanceView = ({ balances, totalSpend, memberUpiIds, onPay }: BalanceViewP
                               if (onPay) {
                                 onPay(debt.member, debt.amount);
                               } else {
-                                window.location.href = generateUpiLink(memberUpiIds[debt.member], debt.member, debt.amount);
+                                window.location.href = generateUpiLink(
+                                  memberUpiIds[debt.member], 
+                                  debt.member, 
+                                  debt.amount, 
+                                  `SplitZy: ${balance.member} to ${debt.member}`
+                                );
                               }
                             }}
                           >
