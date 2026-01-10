@@ -36,10 +36,13 @@ import { SmoothScroll } from "./components/SmoothScroll";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
+import { AnalyticsTracker } from "./components/AnalyticsTracker";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AnalyticsTracker />
         <TooltipProvider>
           <Toaster />
           <Sonner />

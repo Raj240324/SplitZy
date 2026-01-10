@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import MemberAvatar from "./MemberAvatar";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import {
   Dialog,
   DialogContent,
@@ -66,6 +67,7 @@ const AddExpenseModal = ({
   const [splitType, setSplitType] = useState<'equal' | 'custom'>('equal');
   const [splitDetails, setSplitDetails] = useState<Record<string, string>>({});
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
 
   // Sync initialData to state
   useEffect(() => {
@@ -143,6 +145,15 @@ const AddExpenseModal = ({
       createdAt: Date.now(),
       splitType,
       splitDetails: finalSplitDetails
+    });
+
+    // Track expense added event
+    trackEvent("expense_added", {
+      category,
+      amount: numAmount,
+      currency: currencySymbol,
+      split_type: splitType,
+      member_count: members.length
     });
 
     onClose();
