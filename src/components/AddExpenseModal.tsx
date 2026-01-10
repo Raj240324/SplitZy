@@ -173,30 +173,31 @@ const AddExpenseModal = ({
           <div className="px-6 py-8 pb-32">
             <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-10">
             
-            {/* Amount Section (Hero) */}
-            <div className="space-y-6 text-center">
-              <Label className="sr-only">Amount</Label>
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex items-center justify-center gap-2 group/amount">
-                  <span className="text-4xl sm:text-5xl font-black text-primary/40 transition-colors group-focus-within/amount:text-primary">
-                    {currencySymbol}
-                  </span>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="h-auto w-auto min-w-[2ch] max-w-full py-2 text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/20 text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    style={{ width: `${Math.max(amount.length, 1) + 1}ch` }}
-                    autoFocus
-                    min="0"
-                    step="0.01"
-                  />
+            {/* High-Visibility Amount Hero */}
+            <div className="space-y-6 flex flex-col items-center">
+              <div className="w-full max-w-[280px] sm:max-w-[320px] relative">
+                <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] blur-2xl transition-all group-focus-within/amount:bg-primary/10" />
+                <div className="relative bg-muted/20 backdrop-blur-sm border border-border/40 rounded-[2.5rem] p-8 flex flex-col items-center gap-2 group/amount focus-within:border-primary/30 focus-within:bg-background/50 transition-all duration-500">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">Amount</Label>
+                  <div className="flex items-center justify-center gap-3 w-full">
+                    <span className="text-4xl sm:text-5xl font-black text-primary transition-colors">
+                      {currencySymbol}
+                    </span>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="h-auto w-full text-center text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      autoFocus
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
                 </div>
-                <div className="h-px w-32 bg-gradient-to-r from-transparent via-border to-transparent" />
               </div>
               
-              <div className="max-w-[320px] mx-auto px-4">
+              <div className="max-w-[320px] w-full px-4">
                  <div className="relative group">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                        <Receipt className="h-4 w-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
@@ -205,7 +206,7 @@ const AddExpenseModal = ({
                       placeholder="What is this for?"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="pl-11 h-12 rounded-2xl bg-muted/40 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-semibold placeholder:font-normal placeholder:text-muted-foreground/40"
+                      className="pl-11 h-12 rounded-2xl bg-muted/40 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-semibold placeholder:font-normal placeholder:text-muted-foreground/40 shadow-sm"
                     />
                  </div>
               </div>
