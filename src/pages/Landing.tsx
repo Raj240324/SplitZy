@@ -328,50 +328,90 @@ const Landing = () => {
           {isSignedIn ? (
             <Button 
               size="lg" 
-              className="w-full sm:w-auto text-lg px-8 py-6 font-semibold"
+              className="w-full sm:w-auto text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
               onClick={() => navigate('/dashboard')}
             >
               Go to Dashboard
             </Button>
           ) : (
-            <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto text-lg px-8 py-6 font-semibold"
-              >
-                Get Started Free
-              </Button>
-            </SignInButton>
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+              onClick={() => navigate('/sign-in')}
+            >
+              Get Started Free
+            </Button>
           )}
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2 group">
-              <Logo />
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-sm text-muted-foreground flex items-center gap-1.5 leading-none">
-                Made with ❤️ by <span className="font-bold text-foreground transition-colors hover:text-primary cursor-default">nagadev</span> • +1000 Aura for the Group Chat
+      {/* Footer - Redesigned for Engagement & Stability */}
+      <footer className="relative border-t border-primary/10 bg-muted/20 pb-12 pt-16 overflow-hidden">
+        {/* Decorative Background Element */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            {/* Brand Column */}
+            <div className="md:col-span-2 space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
+              <Logo size="lg" />
+              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                The most aesthetic and efficient way to split bills, track expenses, and stay cool with the squad. No Cap, just vibes.
               </p>
-              <div className="flex items-center justify-center gap-4 mt-2">
-                <NavLink to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
-                  Privacy Policy
-                </NavLink>
-                <NavLink to="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
-                  Terms of Service
-                </NavLink>
-                <a href="mailto:nagarajan.webdev@gmail.com" className="text-xs text-muted-foreground hover:text-primary transition-colors hover:underline underline-offset-4 decoration-primary/30 font-medium tracking-tight">
-                  Contact
-                </a>
+              <div className="flex items-center gap-4">
+                <div className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all cursor-pointer">
+                  <span className="text-xs font-black uppercase tracking-tighter">iOS</span>
+                </div>
+                <div className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all cursor-pointer">
+                  <span className="text-xs font-black uppercase tracking-tighter">Android</span>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground/60 font-medium tracking-widest uppercase text-center md:text-right">
-              © {new Date().getFullYear()} SplitZy • SPLIT BILLS NOT FRIENDSHIPS
+
+            {/* Product Column */}
+            <div className="space-y-6 text-center md:text-left">
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground/50">Product</h4>
+              <nav className="flex flex-col gap-4">
+                <a href="#features" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Features</a>
+                <a href="#how-it-works" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">How it Works</a>
+                <a href="#faq" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">FAQ</a>
+                <NavLink to="/dashboard" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Dashboard</NavLink>
+              </nav>
+            </div>
+
+            {/* Engineering & Social Column */}
+            <div className="space-y-6 text-center md:text-left">
+              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-foreground/50">Engineering</h4>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-foreground">Developed by nagadev</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">+1000 Aura for the Group Chat</p>
+                </div>
+                <nav className="flex flex-col gap-4">
+                  <a href="mailto:nagarajan.webdev@gmail.com" className="text-sm font-semibold text-primary hover:underline underline-offset-4 decoration-primary/30">
+                    Contact Developer
+                  </a>
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                    <NavLink to="/privacy" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors">Privacy</NavLink>
+                    <NavLink to="/terms" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors">Terms</NavLink>
+                  </div>
+                </nav>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[10px] text-muted-foreground/60 font-black tracking-[0.2em] uppercase text-center md:text-left">
+              © {new Date().getFullYear()} SplitZy • Engineered with ❤️ for the main characters
             </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[10px] font-black tracking-widest text-emerald-500/80 uppercase">System Operational</span>
+            </div>
           </div>
         </div>
       </footer>

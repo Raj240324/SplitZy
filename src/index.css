@@ -273,12 +273,15 @@
   /* Modal Viewport Fixes */
   @media (max-width: 640px) {
     /* Ensure Dialogs don't get lost on small screens with keyboard */
+    /* Only target safe selectors, avoid overriding third-party modals if possible */
     div[role="dialog"] {
+      left: 50% !important;
       top: 50% !important;
       transform: translate(-50%, -50%) !important;
       width: calc(100% - 2rem) !important;
       margin: 0 auto;
       max-height: 85vh !important;
+      position: fixed !important;
     }
 
     /* Prevent popovers (notifications, etc) from overflowing screen */
