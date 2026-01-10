@@ -40,6 +40,7 @@ interface AddExpenseModalProps {
   members: string[];
   onSave: (expense: Omit<Expense, "id">) => void;
   initialData?: { amount?: string; title?: string };
+  currencySymbol?: string;
 }
 
 const categories = [
@@ -55,7 +56,8 @@ const AddExpenseModal = ({
   onClose,
   members,
   onSave,
-  initialData
+  initialData,
+  currencySymbol = "₹"
 }: AddExpenseModalProps) => {
   const [amount, setAmount] = useState("");
   const [title, setTitle] = useState("");
@@ -172,33 +174,38 @@ const AddExpenseModal = ({
             <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-10">
             
             {/* Amount Section (Hero) */}
-            <div className="space-y-4 text-center">
+            <div className="space-y-6 text-center">
               <Label className="sr-only">Amount</Label>
-              <div className="flex justify-center items-center gap-1">
-                 <span className="text-4xl sm:text-5xl font-black text-muted-foreground/40">₹</span>
-                 <Input
-                  type="number"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="h-auto py-2 text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/20 min-w-[1ch] text-left"
-                  style={{ width: `${Math.max(amount.length, 1) + (amount.includes('.') ? 0 : 0)}ch` }}
-                  autoFocus
-                  min="0"
-                  step="0.01"
-                 />
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center justify-center gap-2 group/amount">
+                  <span className="text-4xl sm:text-5xl font-black text-primary/40 transition-colors group-focus-within/amount:text-primary">
+                    {currencySymbol}
+                  </span>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="h-auto w-auto min-w-[2ch] max-w-full py-2 text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/20 text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ width: `${Math.max(amount.length, 1) + 1}ch` }}
+                    autoFocus
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div className="h-px w-32 bg-gradient-to-r from-transparent via-border to-transparent" />
               </div>
               
-              <div className="max-w-[280px] mx-auto">
+              <div className="max-w-[320px] mx-auto px-4">
                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                        <Receipt className="h-4 w-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
                     </div>
                     <Input
                       placeholder="What is this for?"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="pl-9 h-12 rounded-2xl bg-muted/30 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-medium placeholder:font-normal"
+                      className="pl-11 h-12 rounded-2xl bg-muted/40 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-semibold placeholder:font-normal placeholder:text-muted-foreground/40"
                     />
                  </div>
               </div>

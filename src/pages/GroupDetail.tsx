@@ -59,7 +59,8 @@ const GroupDetail = () => {
     recordSettlement,
     updateGroup,
     addMember,
-    removeMember
+    removeMember,
+    renameMember
   } = useGroup(id || '');
 
   // For delete group, we use the list hook
@@ -572,6 +573,7 @@ const GroupDetail = () => {
           members={group.members}
           onSave={handleAddExpense}
           initialData={scannedData}
+          currencySymbol={getCurrencySymbol()}
         />
 
         <ScanBillModal
