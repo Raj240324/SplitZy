@@ -1,9 +1,10 @@
 import { useAuth } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
+import { LoadingAnimation } from "./LoadingAnimation";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isLoaded, isSignedIn } = useAuth();
-  if (!isLoaded) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (!isLoaded) return <LoadingAnimation size="lg" />;
   if (!isSignedIn) return <Navigate to="/" replace />;
   return children;
 };

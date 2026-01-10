@@ -92,14 +92,7 @@ const Dashboard = () => {
   );
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background pt-24 pb-12">
-        <Header />
-        <div className="container mx-auto max-w-6xl px-4 h-[60vh] flex items-center justify-center">
-          <LoadingAnimation />
-        </div>
-      </div>
-    );
+    return <LoadingAnimation />;
   }
 
   return (

@@ -31,6 +31,7 @@ import {
 } from '@/services/user.service';
 import { isValidUpiId } from '@/utils/payment';
 import { UserProfile, UpiId } from '@/types';
+import { LoadingAnimation } from '../LoadingAnimation';
 
 export const ManageUpi = () => {
   const { user } = useUser();
@@ -132,7 +133,7 @@ export const ManageUpi = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {loading ? (
-          <div className="text-center py-4 text-sm text-muted-foreground">Loading...</div>
+          <LoadingAnimation size="sm" className="min-h-[150px]" />
         ) : (
           <>
             <div className="space-y-3">

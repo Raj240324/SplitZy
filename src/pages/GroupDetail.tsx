@@ -219,14 +219,7 @@ const GroupDetail = () => {
   };
 
   if (isLoading || !group) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col pt-24">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <LoadingAnimation />
-        </div>
-      </div>
-    );
+    return <LoadingAnimation />;
   }
 
   const totalSpend = getTotalExpenses(group.expenses);

@@ -74,13 +74,13 @@ export const PaymentModal = ({
 
         {step === 'method' && (
           <div className="space-y-6 py-4">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl border border-border/50">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-muted/50 rounded-xl border border-border/50">
               <div className="flex items-center gap-3">
-                <MemberAvatar name={fromUser.name} />
-                <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider">pays</div>
-                <MemberAvatar name={toUser.name} />
+                <MemberAvatar name={fromUser.name} size="sm" />
+                <div className="text-muted-foreground text-[10px] font-medium uppercase tracking-wider">pays</div>
+                <MemberAvatar name={toUser.name} size="sm" />
               </div>
-              <div className="text-2xl font-bold tracking-tight">
+              <div className="text-xl sm:text-2xl font-bold tracking-tight">
                 {currencySymbol}{amount.toFixed(2)}
               </div>
             </div>
@@ -90,40 +90,40 @@ export const PaymentModal = ({
               
               <Button 
                 variant="outline" 
-                className="w-full justify-between h-16 rounded-xl hover:bg-primary/5 hover:border-primary/50 transition-all duration-300 group"
+                className="w-full justify-between h-auto min-h-[4rem] p-4 rounded-xl hover:bg-primary/5 hover:border-primary/50 transition-all duration-300 group"
                 disabled={!toUser.upiId}
                 onClick={() => { setPaymentMethod('upi'); setStep('pay'); }}
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                    <Smartphone className="w-6 h-6 text-primary" />
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors shrink-0">
+                    <Smartphone className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="text-left">
-                    <div className="font-bold">UPI Payment</div>
-                    <div className="text-xs text-muted-foreground">
+                  <div className="text-left overflow-hidden">
+                    <div className="font-bold text-sm">UPI Payment</div>
+                    <div className="text-[10px] sm:text-xs text-muted-foreground truncate max-w-[120px] sm:max-w-none">
                       {toUser.upiId ? (
-                        <span className="flex items-center gap-1 font-mono">{toUser.upiId}</span>
+                        <span className="font-mono">{toUser.upiId}</span>
                       ) : (
-                        'Receiver has no UPI linked'
+                        'No UPI linked'
                       )}
                     </div>
                   </div>
                 </div>
-                {toUser.upiId && <Badge variant="secondary" className="px-2 py-0.5 font-bold bg-primary/20 text-primary border-none">QR FIRST</Badge>}
+                {toUser.upiId && <Badge variant="secondary" className="px-1.5 py-0 font-bold bg-primary/20 text-primary border-none text-[9px] shrink-0">QR FIRST</Badge>}
               </Button>
 
               <Button 
                 variant="outline" 
-                className="w-full justify-between h-16 rounded-xl hover:bg-green-500/5 hover:border-green-500/50 transition-all duration-300 group"
+                className="w-full justify-between h-auto min-h-[4rem] p-4 rounded-xl hover:bg-green-500/5 hover:border-green-500/50 transition-all duration-300 group"
                 onClick={() => { setPaymentMethod('cash'); handleMarkPaid(); }}
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
-                    <Check className="w-6 h-6 text-green-600" />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors shrink-0">
+                    <Check className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="text-left">
-                    <div className="font-bold">Mark as Paid</div>
-                    <div className="text-xs text-muted-foreground">Cash or offline settlement</div>
+                    <div className="font-bold text-sm">Mark as Paid</div>
+                    <div className="text-[10px] sm:text-xs text-muted-foreground">Cash or offline settlement</div>
                   </div>
                 </div>
               </Button>
