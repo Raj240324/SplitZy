@@ -79,6 +79,7 @@ export const listenToUserNotifications = (
       id: doc.id,
       ...doc.data({ serverTimestamps: 'estimate' }),
     })) as AppNotification[];
+    callback(notifications);
   });
 };
 

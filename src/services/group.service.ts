@@ -188,9 +188,10 @@ export const updateExpenseService = async (groupId: string, expenses: Expense[])
         expenses
     });
 
-    // NOTE: Detailed logging for updates is tricky with this "replace all" strategy. 
-    // We'll log a generic message.
     await addActivity(groupId, 'expense_updated', 'An expense was updated');
+    
+    // Notify about update
+    await notifyGroup(groupId, 'Expense Updated', 'An expense in your group was modified', 'expense');
 };
 
 // We need a better update service that takes just the ID to log better, but keeping existing signature for now.
@@ -200,7 +201,11 @@ export const deleteExpenseService = async (groupId: string, expense: Expense) =>
         expenses: arrayRemove(expense)
     });
 
-    await addActivity(groupId, 'expense_deleted', `Expense "${expense.title}" deleted`, expense.paidBy);
+    const desc = `Expense "${expense.title}" deleted`;
+    await addActivity(groupId, 'expense_deleted', desc, expense.paidBy);
+    
+    // Notify about deletion
+    await notifyGroup(groupId, 'Expense Deleted', desc, 'expense');
 };
 
 export const updateSettlementStatus = async (groupId: string, expenseId: string, status: 'confirmed' | 'failed', actorName: string) => {
