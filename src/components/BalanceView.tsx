@@ -152,6 +152,7 @@ const BalanceView = ({ balances, totalSpend, memberUpiIds, onPay }: BalanceViewP
             );
           })
         )}
+      </div>
     </div>
   );
 };

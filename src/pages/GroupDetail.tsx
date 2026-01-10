@@ -378,7 +378,7 @@ const GroupDetail = () => {
                   </span>
                 ) : yourBalance && yourBalance.netBalance > 0 ? (
                   <span className="inline-flex items-center text-fluid-xs font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
-                    Recieve {formatCurrency(yourBalance.netBalance)}
+                    Receive {formatCurrency(yourBalance.netBalance)}
                   </span>
                 ) : yourBalance ? (
                   <span className="inline-flex items-center text-fluid-xs font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 px-4 py-1.5 rounded-full border border-rose-500/20 whitespace-nowrap">
@@ -657,7 +657,6 @@ const GroupDetail = () => {
           group={group}
           onUpdate={updateGroup}
         />
-
         {editingMember && (
           <EditMemberModal
             open={!!editingMember}
@@ -668,7 +667,8 @@ const GroupDetail = () => {
           />
         )}
       </div>
-    </TooltipProvider>
+    </div>
+  </TooltipProvider>
   );
 };
 
