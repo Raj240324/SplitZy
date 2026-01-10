@@ -68,11 +68,9 @@ const Landing = () => {
 
         <div className="container mx-auto px-6 md:px-12 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-left lg:pl-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 animate-fade-in group">
-                <Logo size="sm" />
-                <div className="h-4 w-[1px] bg-white/10 mx-1" />
-                <span className="text-fluid-xs font-black tracking-[0.2em] text-primary-foreground/60 uppercase">100% Free Forever</span>
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:pl-8">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in">
+                <span className="text-[10px] font-black tracking-[0.25em] text-primary uppercase">100% Free Forever</span>
               </div>
               
               <h1 className="text-fluid-hero font-black mb-6 md:mb-8 tracking-[-0.04em] text-white">
@@ -82,17 +80,17 @@ const Landing = () => {
                 </span>
               </h1>
               
-              <p className="text-fluid-body-lg text-slate-400 mb-8 md:mb-12 max-w-lg leading-relaxed font-light tracking-tight">
+              <p className="text-fluid-body-lg text-slate-400 mb-10 md:mb-12 max-w-lg leading-relaxed font-light tracking-tight">
                 <span className="whitespace-nowrap">
                   <span className="font-bold text-white/90">Split</span>                  <span className="brand-text brand-glitch !text-fluid-lg mx-0.5" data-text="Zy">Zy</span>
                 </span> uses AI and Firebase to scan receipts and sync expenses in real-time. Roomies, trips, or brunch — we got you, no cap.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center">
                 {isSignedIn ? (
                   <Button 
                     size="lg" 
-                    className="w-full sm:w-auto text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all group"
+                    className="w-full sm:w-auto text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all group active:scale-95"
                     onClick={() => navigate('/dashboard')}
                   >
                     Go to Dashboard
@@ -101,26 +99,12 @@ const Landing = () => {
                 ) : (
                   <Button 
                     size="lg" 
-                    className="w-full sm:w-auto text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
+                    className="w-full sm:w-auto text-lg px-8 py-7 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all active:scale-95"
                     onClick={() => navigate('/sign-in')}
                   >
                     Start a Group
                   </Button>
                 )}
-                
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="w-full sm:w-auto text-lg px-8 py-7 font-bold bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white transition-all font-black tracking-tight"
-                  onClick={() => {
-                    const lenis = (window as any).lenis;
-                    if (lenis) {
-                      lenis.scrollTo('#features', { offset: -80 });
-                    }
-                  }}
-                >
-                  Learn More
-                </Button>
               </div>
 
               {!isSignedIn && (
