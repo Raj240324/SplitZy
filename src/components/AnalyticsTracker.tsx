@@ -6,24 +6,20 @@ export const AnalyticsTracker = () => {
   const location = useLocation();
   const { trackPageView, trackEvent } = useAnalytics();
 
-  // Handle page_view tracking on route change
+  // Page view + app open tracking
   useEffect(() => {
-    // We use a small delay or requestAnimationFrame to ensure title is updated
-    // and initialization doesn't block critical path
-    const handleRouteChange = () => {
-      trackPageView(location.pathname + location.search);
-    };
-
-    // Tracking app_open only once per session/initial load
-    if (window.performance && window.performance.navigation.type === 0) {
+    // Track app_open only once per session
+    if (!sessionStorage.getItem("app_open_tracked")) {
       trackEvent("app_open");
+      sessionStorage.setItem("app_open_tracked", "true");
     }
 
-    // Delay tracking until the next tick to ensure hydration is complete
-    // and title is potentially updated by components
-    const timeoutId = setTimeout(handleRouteChange, 100);
+    // Track page view after paint (no magic delay)
+    const rafId = requestAnimationFrame(() => {
+      trackPageView(location.pathname + location.search);
+    });
 
-    return () => clearTimeout(timeoutId);
+    return () => cancelAnimationFrame(rafId);
   }, [location, trackPageView, trackEvent]);
 
   // Track PWA installation
@@ -33,8 +29,10 @@ export const AnalyticsTracker = () => {
     };
 
     window.addEventListener("appinstalled", handlePWAInstall);
-    return () => window.removeEventListener("appinstalled", handlePWAInstall);
+    return () => {
+      window.removeEventListener("appinstalled", handlePWAInstall);
+    };
   }, [trackEvent]);
 
-  return null; // This component doesn't render anything
+  return null;
 };
