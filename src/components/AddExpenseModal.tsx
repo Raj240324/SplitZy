@@ -173,40 +173,52 @@ const AddExpenseModal = ({
           <div className="px-6 py-8 pb-32">
             <form id="add-expense-form" onSubmit={handleSubmit} className="space-y-10">
             
-            {/* High-Visibility Amount Hero */}
-            <div className="space-y-6 flex flex-col items-center">
-              <div className="w-full max-w-[280px] sm:max-w-[320px] relative">
-                <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] blur-2xl transition-all group-focus-within/amount:bg-primary/10" />
-                <div className="relative bg-muted/20 backdrop-blur-sm border border-border/40 rounded-[2.5rem] p-8 flex flex-col items-center gap-2 group/amount focus-within:border-primary/30 focus-within:bg-background/50 transition-all duration-500">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">Amount</Label>
-                  <div className="flex items-center justify-center gap-3 w-full">
-                    <span className="text-4xl sm:text-5xl font-black text-primary transition-colors">
-                      {currencySymbol}
-                    </span>
-                    <Input
+            {/* Neo-Fintech Amount Hero - Balanced Size */}
+            <div className="space-y-8 flex flex-col items-center py-4">
+              <div className="flex flex-col items-center gap-2 w-full max-w-full overflow-hidden">
+                <div className="relative group/amount flex items-center justify-center gap-4 px-4 transition-all duration-500">
+                  <span className="text-5xl sm:text-6xl font-black text-primary select-none leading-none inline-flex items-center">
+                    {currencySymbol}
+                  </span>
+                  <div className="relative flex items-center justify-center">
+                    <input
                       type="number"
                       placeholder="0"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
-                      className="h-auto w-full text-center text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus-visible:ring-0 placeholder:text-muted-foreground/10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full text-center text-5xl sm:text-6xl font-black border-0 bg-transparent p-0 focus:outline-none focus:ring-0 placeholder:text-muted-foreground/5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none tracking-tighter leading-none text-primary"
                       autoFocus
                       min="0"
                       step="0.01"
+                      style={{ width: `${Math.max(amount.length, 1) + 0.5}ch`, maxWidth: '100vw' }}
                     />
                   </div>
                 </div>
+                
+                {/* Interactive Underline */}
+                <div className="relative w-40 sm:w-48 h-1.5 mt-4">
+                  <div className="absolute inset-0 bg-muted/20 rounded-full" />
+                  <div className={cn(
+                    "absolute inset-0 bg-gradient-to-r from-primary/40 via-primary to-primary/40 rounded-full transition-all duration-700 ease-out shadow-[0_0_15px_rgba(var(--primary),0.3)]",
+                    amount ? "w-full scale-x-100" : "w-0 scale-x-0 group-focus-within/amount:w-full group-focus-within/amount:scale-x-100"
+                  )} />
+                </div>
+                
+                <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 mt-4 animate-pulse">
+                  {amount ? "Amount to split" : "Enter amount"}
+                </Label>
               </div>
               
               <div className="max-w-[320px] w-full px-4">
-                 <div className="relative group">
+                 <div className="relative group/title">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                       <Receipt className="h-4 w-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                       <Receipt className="h-4 w-4 text-muted-foreground/40 group-focus-within/title:text-primary transition-colors duration-300" />
                     </div>
                     <Input
                       placeholder="What is this for?"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="pl-11 h-12 rounded-2xl bg-muted/40 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-semibold placeholder:font-normal placeholder:text-muted-foreground/40 shadow-sm"
+                      className="pl-11 h-14 rounded-2xl bg-muted/30 border-transparent focus:border-primary/20 focus:bg-background transition-all text-center font-bold text-lg placeholder:font-medium placeholder:text-muted-foreground/30 shadow-sm"
                     />
                  </div>
               </div>
