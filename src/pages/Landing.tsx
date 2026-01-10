@@ -94,7 +94,7 @@ const Landing = () => {
                     onClick={() => navigate('/dashboard')}
                   >
                     Go to Dashboard
-                    <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg] group-hover:translate-x-1 transition-transform" />
+                    <ChevronDown className="w-5 h-5 ml-2 rotate-[-90deg] group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                   </Button>
                 ) : (
                   <Button 
@@ -148,7 +148,7 @@ const Landing = () => {
               {/* Floating Mini Cards */}
               <div className="absolute top-[10%] right-[0%] p-4 bg-emerald-500/20 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-xl animate-float-delayed">
                  <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20"><CheckCircle className="w-4 h-4" /></div>
+                   <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20"><CheckCircle className="w-4 h-4" aria-hidden="true" /></div>
                    <div>
                       <p className="text-fluid-xs font-bold uppercase tracking-wider text-emerald-400">Settled Up</p>
                       <p className="text-fluid-sm font-semibold text-white">You get ₹500</p>
@@ -176,19 +176,19 @@ const Landing = () => {
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 text-center">
             <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Lock className="w-5 h-5 text-primary" />
+                <Lock className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">Secure Era</span>
             </div>
             <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
               <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Shield className="w-5 h-5 text-emerald-500" />
+                <Shield className="w-5 h-5 text-emerald-500" aria-hidden="true" />
               </div>
               <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">Free Forever</span>
             </div>
             <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
               <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Users className="w-5 h-5 text-orange-500" />
+                <Users className="w-5 h-5 text-orange-500" aria-hidden="true" />
               </div>
               <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground md:text-foreground/70 transition-colors">No ads. No Cap.</span>
             </div>
@@ -214,7 +214,7 @@ const Landing = () => {
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-primary/10 transition-colors" />
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-inner">
-                  <feature.icon className="w-7 h-7 text-primary" />
+                  <feature.icon className="w-7 h-7 text-primary" aria-hidden="true" />
                 </div>
                 <h3 className="font-bold mb-3 text-xl text-foreground group-hover:text-primary transition-colors">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed group-hover:text-foreground/70 transition-colors">{feature.desc}</p>
@@ -241,7 +241,7 @@ const Landing = () => {
                   {i + 1}
                 </div>
                 <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform shadow-inner">
-                  <step.icon className="w-10 h-10 text-primary" />
+                  <step.icon className="w-10 h-10 text-primary" aria-hidden="true" />
                 </div>
                 <h3 className="text-2xl font-black mb-4 text-foreground uppercase tracking-tight transition-colors">{step.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed font-medium transition-colors">{step.desc}</p>
@@ -268,7 +268,7 @@ const Landing = () => {
                 className="bg-card dark:bg-slate-800/20 backdrop-blur-md rounded-2xl p-8 border border-border/50 dark:border-white/5 hover:border-blue-500/30 transition-all group flex flex-col items-center text-center shadow-sm"
               >
                 <div className="w-16 h-16 bg-muted dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-500/10 transition-all group-hover:shadow-lg">
-                  <use.icon className="w-8 h-8 text-muted-foreground dark:text-slate-400 group-hover:text-blue-500 group-hover:scale-110 transition-all" />
+                  <use.icon className="w-8 h-8 text-muted-foreground dark:text-slate-400 group-hover:text-blue-500 group-hover:scale-110 transition-all" aria-hidden="true" />
                 </div>
                 <h3 className="font-black mb-3 text-lg text-foreground group-hover:text-blue-500 transition-colors uppercase tracking-tight">{use.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed font-medium transition-colors">{use.desc}</p>

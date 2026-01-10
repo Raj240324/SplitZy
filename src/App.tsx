@@ -47,20 +47,22 @@ const App = () => (
           <ScrollToTopButton />
           
           <SmoothScroll>
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/sign-in/*" element={<SignInPage />} />
-                <Route path="/sign-up/*" element={<SignUpPage />} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/join" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
+            <main id="main-content">
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/sign-in/*" element={<SignInPage />} />
+                  <Route path="/sign-up/*" element={<SignUpPage />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/join" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </main>
           </SmoothScroll>
         </TooltipProvider>
       </BrowserRouter>

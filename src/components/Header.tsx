@@ -37,7 +37,7 @@ export const Header = () => {
               className="rounded-full h-8 w-8 sm:h-9 sm:w-9 -ml-1 sm:-ml-2 text-muted-foreground hover:text-foreground"
               aria-label="Go back"
             >
-              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
             </Button>
           )}
           <NavLink to="/" className="flex items-center group transition-transform active:scale-95">

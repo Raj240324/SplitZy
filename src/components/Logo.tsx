@@ -47,8 +47,10 @@ export const Logo = ({ className, size = "md", showTagline = false }: LogoProps)
           width="48" 
           height="48" 
           decoding="async"
+          loading="eager"
           {...(size === 'lg' || size === 'xl' ? { fetchpriority: 'high' } : {})}
           className={cn(currentSize.img, "object-contain relative transition-transform group-hover/logo:rotate-12")} 
+          aria-hidden="false"
         />
       </div>
       <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-2 whitespace-nowrap">

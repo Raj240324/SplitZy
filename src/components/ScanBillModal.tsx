@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
+// tesseract.js will be dynamically imported when needed
 import { Camera, Upload, Loader2, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,6 +42,9 @@ const ScanBillModal = ({ open, onClose, onScanComplete }: ScanBillModalProps) =>
     setProgress(0);
 
     try {
+      // Dynamic import to reduce initial bundle size
+      const { createWorker } = await import('tesseract.js');
+      
       // Tesseract.js v5 style
       const worker = await createWorker('eng', 1, {
         logger: (m) => {

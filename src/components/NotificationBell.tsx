@@ -119,8 +119,8 @@ export const NotificationBell = () => {
   );
 
   const BellIcon = () => (
-    <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-primary/5 hover:text-primary transition-colors" aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}>
-      <Bell className="w-5 h-5" />
+    <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-primary/5 hover:text-primary transition-colors" aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}>
+      <Bell className="w-5 h-5" aria-hidden="true" />
       {unreadCount > 0 && (
         <span className="absolute top-1.5 right-1.5 h-4 w-4 bg-primary text-white text-fluid-xs font-black rounded-full flex items-center justify-center ring-2 ring-background animate-in zoom-in duration-300">
           {unreadCount > 9 ? '9+' : unreadCount}
