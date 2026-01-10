@@ -108,10 +108,10 @@ const Dashboard = () => {
               <p className="text-muted-foreground">Manage your shared expenses with friends and family</p>
             </div>
             <div className="flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
-              <Button onClick={() => setShowJoinModal(true)} variant="outline" className="flex-1 xs:flex-none">
+              <Button onClick={() => setShowJoinModal(true)} variant="outline" className="flex-1 xs:flex-none" aria-label="Join a group with a code">
                 Join Group
               </Button>
-              <Button onClick={() => setShowCreateModal(true)} className="gap-2 flex-1 xs:flex-none">
+              <Button onClick={() => setShowCreateModal(true)} className="gap-2 flex-1 xs:flex-none" aria-label="Create a new group">
                 <Plus className="w-4 h-4" />
                 New Group
               </Button>
@@ -125,6 +125,7 @@ const Dashboard = () => {
               className="pl-10 h-12 bg-card border-border/50 focus:border-primary/50 transition-colors"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search your groups"
             />
           </div>
 
