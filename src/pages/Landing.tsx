@@ -57,7 +57,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-white transition-colors duration-500 selection:bg-primary/30">
+      <section className="relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden bg-slate-950 text-white transition-colors duration-500 selection:bg-primary/30">
         <Header />
         {/* Animated Background Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -66,7 +66,7 @@ const Landing = () => {
           <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/10 rounded-full blur-[100px] animate-blob animation-delay-4000" />
         </div>
 
-        <div className="container mx-auto px-6 md:px-12 py-20 relative z-10">
+        <div className="container mx-auto px-6 md:px-12 py-12 md:py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:pl-8">
               <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in">
@@ -171,7 +171,7 @@ const Landing = () => {
       </section>
 
       {/* Trust Indicators */}
-      <section id="features" className="py-12 border-b border-border bg-muted/30 dark:bg-slate-900/50 backdrop-blur-sm transition-colors">
+      <section id="features" className="py-8 md:py-12 border-b border-border bg-muted/30 dark:bg-slate-900/50 backdrop-blur-sm transition-colors">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 text-center">
             <div className="flex items-center gap-3 group px-4 py-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition-all">
@@ -197,13 +197,13 @@ const Landing = () => {
       </section>
 
       {/* Key Features */}
-      <section className="py-32 bg-background dark:bg-slate-950 relative overflow-hidden transition-colors">
+      <section className="py-16 md:py-32 bg-background dark:bg-slate-950 relative overflow-hidden transition-colors">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-fluid-heading font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">
+          <h2 className="text-fluid-heading font-black text-center mb-4 md:mb-6 tracking-[-0.03em] text-foreground transition-colors">
             Built for the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-400 to-fuchsia-400 animate-shimmer">modern world</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-fluid-lg leading-relaxed font-light tracking-tight transition-colors">
+          <p className="text-muted-foreground text-center mb-12 md:mb-20 max-w-md mx-auto text-fluid-lg leading-relaxed font-light tracking-tight transition-colors">
             Powerful features that make expense splitting effortless.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
@@ -225,10 +225,10 @@ const Landing = () => {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-32 bg-muted/20 dark:bg-gradient-to-b dark:from-slate-950 dark:to-slate-900 relative transition-colors">
+      <section id="how-it-works" className="py-16 md:py-32 bg-muted/20 dark:bg-gradient-to-b dark:from-slate-950 dark:to-slate-900 relative transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-fluid-heading font-black text-center mb-6 tracking-[-0.03em] text-foreground transition-colors">How It Works</h2>
-          <p className="text-muted-foreground text-center mb-20 max-w-md mx-auto text-fluid-lg font-light tracking-tight transition-colors">
+          <h2 className="text-fluid-heading font-black text-center mb-4 md:mb-6 tracking-[-0.03em] text-foreground transition-colors">How It Works</h2>
+          <p className="text-muted-foreground text-center mb-12 md:mb-20 max-w-md mx-auto text-fluid-lg font-light tracking-tight transition-colors">
             Three simple steps to fair expense splitting
           </p>
           <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
@@ -252,13 +252,13 @@ const Landing = () => {
       </section>
 
       {/* Use Cases */}
-      <section className="py-24 bg-background dark:bg-slate-900 overflow-hidden relative transition-colors">
+      <section className="py-12 md:py-24 bg-background dark:bg-slate-900 overflow-hidden relative transition-colors">
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">
+          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-3 md:mb-4 tracking-[-0.02em] text-foreground transition-colors">
             Perfect for <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-500 transition-colors">any situation</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
+          <p className="text-muted-foreground text-center mb-10 md:mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
             Whether it's a trip, a party, or daily life.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -279,10 +279,10 @@ const Landing = () => {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 bg-muted/10 dark:bg-slate-950 transition-colors">
+      <section id="faq" className="py-12 md:py-24 bg-muted/10 dark:bg-slate-950 transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-4 tracking-[-0.02em] text-foreground transition-colors">FAQ</h2>
-          <p className="text-muted-foreground text-center mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
+          <h2 className="text-fluid-subheading md:text-fluid-heading font-black text-center mb-3 md:mb-4 tracking-[-0.02em] text-foreground transition-colors">FAQ</h2>
+          <p className="text-muted-foreground text-center mb-10 md:mb-16 max-w-md mx-auto text-fluid-body-lg leading-relaxed transition-colors">
             Everything you need to know about SplitZy
           </p>
           <div className="max-w-4xl mx-auto">
@@ -303,7 +303,7 @@ const Landing = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 bg-gradient-to-br from-primary/10 to-primary/5 border-y border-primary/20">
+      <section className="py-12 md:py-24 bg-gradient-to-br from-primary/10 to-primary/5 border-y border-primary/20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-fluid-subheading md:text-fluid-heading font-bold mb-4 md:mb-6">Split without the drama.</h2>
           <p className="text-muted-foreground mb-8 md:mb-10 max-w-md md:max-w-xl mx-auto text-fluid-body-lg">
