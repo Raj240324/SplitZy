@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Header } from '@/components/Header';
 import { NavLink } from '@/components/NavLink';
+import { Logo } from '@/components/Logo';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -68,11 +69,9 @@ const Landing = () => {
         <div className="container mx-auto px-6 md:px-12 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-left lg:pl-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 animate-fade-in">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 animate-fade-in group">
+                <Logo size="sm" />
+                <div className="h-4 w-[1px] bg-white/10 mx-1" />
                 <span className="text-fluid-xs font-black tracking-[0.2em] text-primary-foreground/60 uppercase">100% Free Forever</span>
               </div>
               
@@ -351,16 +350,8 @@ const Landing = () => {
       <footer className="border-t border-border py-8 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <img src="/Split-Zy.png" alt="SplitZy" width="32" height="32" className="h-8 w-8 object-contain" />
-              <div className="flex items-baseline gap-0.5">
-                <span className="font-medium text-lg tracking-tighter text-foreground">
-                  Split
-                </span>
-                <span className="brand-text brand-glitch text-2xl !italic !font-black" data-text="Zy">
-                  Zy
-                </span>
-              </div>
+            <div className="flex items-center gap-2 group">
+              <Logo />
             </div>
             <div className="flex flex-col items-center gap-1">
               <p className="text-sm text-muted-foreground flex items-center gap-1.5 leading-none">

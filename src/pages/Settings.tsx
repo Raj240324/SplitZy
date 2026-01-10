@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Header } from "@/components/Header";
 import { useTheme } from "@/components/theme-provider";
 import { useToast } from "@/hooks/use-toast";
+import { Logo } from "@/components/Logo";
 
 import {
   Card,
@@ -231,23 +232,67 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* About */}
-        <Card>
-          <CardHeader>
+        {/* About SplitZy - Enhanced */}
+        <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-background to-primary/5">
+          <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2">
-              <Info className="w-5 h-5" />
+              <Info className="w-5 h-5 text-primary" />
               About SplitZy
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="text-sm text-muted-foreground space-y-2">
-            <div className="flex flex-col gap-0.5">
-              <p className="font-bold text-foreground">SplitZy</p>
-              <p className="text-[10px] font-black tracking-[0.15em] text-muted-foreground/70 uppercase">Split bills not friendships</p>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col items-center sm:items-start gap-4">
+              <Logo size="md" />
+              <p className="text-sm text-muted-foreground leading-relaxed text-center sm:text-left">
+                Split bills, not friendships. SplitZy is a modern expense-sharing platform designed for the generation that values transparency and ease. Built with precision and a "No Cap" philosophy.
+              </p>
             </div>
-            <div className="pt-2 border-t border-border/50">
-              <p className="text-xs font-semibold text-primary">Engineered by nagadev • No Cap</p>
-              <p className="text-[10px] opacity-60">Version 1.0.0 • 2026</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border/50">
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">The Tech Stack</h4>
+                <ul className="space-y-1.5">
+                  <li className="flex items-center gap-2 text-xs font-semibold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    React + Tailwind CSS
+                  </li>
+                  <li className="flex items-center gap-2 text-xs font-semibold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                    Google Firebase Real-time
+                  </li>
+                  <li className="flex items-center gap-2 text-xs font-semibold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    Secure Auth by Clerk
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Engineering</h4>
+                <div className="space-y-1.5">
+                  <p className="text-xs font-bold text-foreground">Developed by nagadev</p>
+                  <a href="mailto:nagarajan.webdev@gmail.com" className="text-xs text-primary hover:underline block">
+                    nagarajan.webdev@gmail.com
+                  </a>
+                  <p className="text-[10px] opacity-60">Version 1.1.0 • Built in 2026</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 pt-4 border-t border-border/50">
+              <button 
+                onClick={() => navigate('/privacy')} 
+                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </button>
+              <button 
+                onClick={() => navigate('/terms')} 
+                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+              >
+                Terms of Service
+              </button>
             </div>
           </CardContent>
         </Card>
