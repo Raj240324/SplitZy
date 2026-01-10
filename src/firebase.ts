@@ -2,8 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import type { Analytics } from "firebase/analytics";
 
-// Initialize Firebase configuration from environment variables
-// Added VITE_FIREBASE_MEASUREMENT_ID for GA4 support
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -14,19 +12,14 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase App
+// ✅ Initialize app ONCE
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore
+// ✅ EXPORT db (THIS WAS THE ISSUE)
 export const db = getFirestore(app);
 
 /**
- * Lazy-loaded Analytics Promise
- * 
- * Why this approach?
- * 1. Lighthouse: Loading Firebase Analytics and gtag.js synchronously can block the main thread and hurt TBT.
- * 2. PWA/Safari: isSupported() ensures we don't crash on older browsers or if IndexedDB is blocked.
- * 3. Performance: We load the heavy analytics SDK only when needed (after hydration/first paint).
+ * Lazy-loaded Analytics (performance-safe)
  */
 export const analyticsPromise = (async (): Promise<Analytics | null> => {
   if (typeof window === "undefined") return null;
@@ -34,13 +27,11 @@ export const analyticsPromise = (async (): Promise<Analytics | null> => {
   try {
     const { getAnalytics, isSupported } = await import("firebase/analytics");
     const supported = await isSupported();
-    
-    if (supported) {
-      return getAnalytics(app);
-    }
-    return null;
+
+    if (!supported) return null;
+    return getAnalytics(app);
   } catch (error) {
-    console.warn("Firebase Analytics failed to initialize:", error);
+    console.warn("Firebase Analytics init failed:", error);
     return null;
   }
 })();
