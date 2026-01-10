@@ -4,16 +4,15 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogDescription,
-  DialogFooter
+  DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Check, Smartphone, QrCode, Copy, ExternalLink, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Check, Smartphone, Copy, ExternalLink, AlertTriangle, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateUpiLink } from '@/utils/payment';
+import { generateUpiLink, generateTransactionRef } from '@/utils/payment';
 import MemberAvatar from '../MemberAvatar';
+import QRCode from 'react-qr-code';
 
 interface PaymentModalProps {
   open: boolean;
@@ -37,18 +36,18 @@ export const PaymentModal = ({
   const { toast } = useToast();
   const [step, setStep] = useState<'method' | 'pay' | 'confirm'>('method');
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'cash'>('upi');
-  const [transactionId, setTransactionId] = useState<string>('');
+  const [transactionRef, setTransactionRef] = useState<string>('');
 
-  // Reset step on open and generate fresh transaction ID
+  // Reset step on open and generate fresh transaction reference
   useEffect(() => {
     if (open) {
       setStep('method'); 
-      setTransactionId(`SZ${Date.now()}${Math.floor(Math.random() * 1000)}`);
+      setTransactionRef(generateTransactionRef());
     }
   }, [open]);
 
   const upiLink = toUser.upiId 
-    ? generateUpiLink(toUser.upiId, toUser.name, amount, transactionId) 
+    ? generateUpiLink(toUser.upiId, toUser.name, amount, `Payment to ${toUser.name}`, transactionRef) 
     : '';
 
   const handleCopyUpi = () => {
@@ -58,17 +57,8 @@ export const PaymentModal = ({
     }
   };
 
-  const handleCopyLink = () => {
-    if (upiLink) {
-        navigator.clipboard.writeText(upiLink);
-        toast({ title: 'Payment Link Copied' });
-    }
-  };
-
   const handleMarkPaid = () => {
     onPaymentComplete(paymentMethod);
-    setStep('confirm'); // Or close?
-    // Actually, onPaymentComplete might close it. Let's assume user wants feedback.
     onClose();
   };
 
@@ -76,61 +66,65 @@ export const PaymentModal = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Make Payment</DialogTitle>
+          <DialogTitle>Settlement</DialogTitle>
           <DialogDescription>
-            Settle your debt with {toUser.name}
+            Choose a payment method to settle with {toUser.name}
           </DialogDescription>
         </DialogHeader>
 
         {step === 'method' && (
           <div className="space-y-6 py-4">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl border border-border/50">
               <div className="flex items-center gap-3">
                 <MemberAvatar name={fromUser.name} />
-                <div className="text-muted-foreground text-sm">pays</div>
+                <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider">pays</div>
                 <MemberAvatar name={toUser.name} />
               </div>
-              <div className="text-xl font-bold">
+              <div className="text-2xl font-bold tracking-tight">
                 {currencySymbol}{amount.toFixed(2)}
               </div>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-medium">Select Payment Method</p>
+              <p className="text-sm font-semibold px-1">Select Payment Method</p>
               
               <Button 
                 variant="outline" 
-                className="w-full justify-between h-14"
-                disabled={!toUser.upiId} // Disable if no UPI
+                className="w-full justify-between h-16 rounded-xl hover:bg-primary/5 hover:border-primary/50 transition-all duration-300 group"
+                disabled={!toUser.upiId}
                 onClick={() => { setPaymentMethod('upi'); setStep('pay'); }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-full">
-                    <Smartphone className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                    <Smartphone className="w-6 h-6 text-primary" />
                   </div>
                   <div className="text-left">
-                    <div className="font-semibold">UPI Apps</div>
+                    <div className="font-bold">UPI Payment</div>
                     <div className="text-xs text-muted-foreground">
-                      {toUser.upiId ? 'GPay, PhonePe, Paytm' : 'Receiver has no UPI linked'}
+                      {toUser.upiId ? (
+                        <span className="flex items-center gap-1 font-mono">{toUser.upiId}</span>
+                      ) : (
+                        'Receiver has no UPI linked'
+                      )}
                     </div>
                   </div>
                 </div>
-                {toUser.upiId && <Badge variant="secondary" className="mr-2">Instant</Badge>}
+                {toUser.upiId && <Badge variant="secondary" className="px-2 py-0.5 font-bold bg-primary/20 text-primary border-none">QR FIRST</Badge>}
               </Button>
 
               <Button 
                 variant="outline" 
-                className="w-full justify-between h-14"
+                className="w-full justify-between h-16 rounded-xl hover:bg-green-500/5 hover:border-green-500/50 transition-all duration-300 group"
                 onClick={() => { setPaymentMethod('cash'); handleMarkPaid(); }}
               >
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-500/10 rounded-full">
-                        <Check className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div className="text-left">
-                        <div className="font-semibold">Cash / Manual</div>
-                        <div className="text-xs text-muted-foreground">Mark as paid manually</div>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
+                    <Check className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold">Mark as Paid</div>
+                    <div className="text-xs text-muted-foreground">Cash or offline settlement</div>
+                  </div>
                 </div>
               </Button>
             </div>
@@ -138,43 +132,58 @@ export const PaymentModal = ({
         )}
 
         {step === 'pay' && paymentMethod === 'upi' && (
-          <div className="space-y-6">
-            <div className="flex justify-center py-2">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiLink)}`} 
-                alt="UPI QR Code" 
-                className="rounded-lg shadow-sm border p-2"
-              />
+          <div className="space-y-6 py-2">
+            <div className="flex flex-col items-center gap-4">
+              <div className="bg-white p-6 rounded-2xl shadow-xl border border-zinc-100 flex items-center justify-center">
+                {upiLink && (
+                  <QRCode 
+                    value={upiLink} 
+                    size={220}
+                    level="H"
+                    className="w-[200px] h-[200px] sm:w-[220px] sm:h-[220px]"
+                  />
+                )}
+              </div>
+              <div className="flex flex-col items-center gap-1 text-center">
+                <p className="font-bold text-lg">Scan using any UPI app</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <Info className="w-4 h-4 text-primary" />
+                  QR payments are safer and fully supported on web.
+                </p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" onClick={handleCopyUpi} className="w-full text-xs">
-                    <Copy className="w-3 h-3 mr-2" /> Copy UPI ID
+            <div className="grid grid-cols-1 gap-3 pt-2">
+              <Button 
+                variant="secondary" 
+                className="w-full h-12 rounded-xl border border-orange-200/50 hover:bg-orange-50 hover:border-orange-300 transition-all text-orange-800 font-medium" 
+                onClick={() => window.location.href = upiLink}
+              >
+                <Smartphone className="w-4 h-4 mr-2" />
+                Open UPI App <span className="text-[10px] ml-1 opacity-70">(May show warning)</span>
+              </Button>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" onClick={handleCopyUpi} className="rounded-xl h-11 text-xs">
+                    <Copy className="w-3.5 h-3.5 mr-2" /> Copy UPI ID
                 </Button>
-                <Button variant="outline" onClick={handleCopyLink} className="w-full text-xs">
-                    <ExternalLink className="w-3 h-3 mr-2" /> Copy Link
+                <Button variant="outline" onClick={handleMarkPaid} className="rounded-xl h-11 text-xs font-bold text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300">
+                    <Check className="w-3.5 h-3.5 mr-2" /> I Have Paid
                 </Button>
+              </div>
             </div>
 
-            <div className="text-center text-sm text-muted-foreground px-4">
-               Open any UPI app and scan the QR code, or use a deep link below.
+            <div className="flex items-start gap-3 p-4 bg-orange-50/50 rounded-xl border border-orange-100 italic">
+                <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                <p className="text-[10.5px] leading-relaxed text-orange-900/80">
+                  <span className="font-bold">Security Note:</span> Browsers may flag direct UPI deep links as risky. 
+                  Scanning the QR code is the <span className="font-bold">standard & most secure</span> way to pay from a web browser.
+                </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
-               {/* Deep links often rely on OS handling 'upi://' scheme */}
-               <Button className="col-span-3" onClick={() => window.location.href = upiLink}>
-                  Open UPI App
-               </Button>
-            </div>
-
-             <div className="flex gap-2">
-                <Button variant="ghost" onClick={() => setStep('method')} className="flex-1">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
-                <Button onClick={handleMarkPaid} className="flex-[2]">
-                    I Have Paid
-                </Button>
-            </div>
+            <Button variant="ghost" onClick={() => setStep('method')} className="w-full rounded-xl">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Go Back
+            </Button>
           </div>
         )}
 

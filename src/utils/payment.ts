@@ -1,24 +1,40 @@
 /**
+ * Generates a unique transaction reference for UPI payments.
+ * Format: TXN + timestamp + random number
+ * Example: TXN1704878325123
+ */
+export const generateTransactionRef = () => {
+  return `TXN${Date.now()}${Math.floor(Math.random() * 1000)}`;
+};
+
+/**
  * Generates a UPI payment URL for deep linking.
  * Format: upi://pay?pa=<address>&pn=<name>&am=<amount>&cu=INR&tn=<note>&tr=<ref>&mc=<mcode>
  * 
- * @param address The recipient's UPI ID (e.g., example@upi)
- * @param name The recipient's name
+ * @param upiId The recipient's UPI ID (e.g., example@upi)
+ * @param payeeName The recipient's name
  * @param amount The transaction amount
- * @param transactionId Optional unique transaction reference
+ * @param note The transaction note/description
+ * @param transactionRef Optional unique transaction reference
  * @returns A string representing the UPI deep link
  */
-export const generateUpiLink = (address: string, name: string, amount: number, transactionId?: string) => {
-  // Encode parameters to ensure the URL is valid
-  const encodedName = encodeURIComponent(name);
+export const generateUpiLink = (
+  upiId: string, 
+  payeeName: string, 
+  amount: number, 
+  note: string,
+  transactionRef?: string
+) => {
+  const encodedName = encodeURIComponent(payeeName);
+  const encodedNote = encodeURIComponent(note);
   const roundedAmount = amount.toFixed(2);
   
-  // mc=0000 is often used for P2P transactions to avoid some risk flags
-  // tr is critical for trackability and reducing risk alerts in some apps
-  let link = `upi://pay?pa=${address}&pn=${encodedName}&am=${roundedAmount}&cu=INR&tn=SplitZy Payment&mc=0000`;
+  // Base UPI URI parameters
+  // mc=0000 is required for P2P/generic merchant code
+  let link = `upi://pay?pa=${upiId}&pn=${encodedName}&am=${roundedAmount}&cu=INR&tn=${encodedNote}&mc=0000`;
   
-  if (transactionId) {
-    link += `&tr=${transactionId}`;
+  if (transactionRef) {
+    link += `&tr=${transactionRef}`;
   }
   
   return link;
