@@ -98,7 +98,53 @@ export const updateGroupService = async (groupId: string, data: Partial<Group>) 
     
     if (data.name) {
         await addActivity(groupId, 'group_updated', `Group renamed to "${data.name}"`);
+    } else if (data.currency) {
+        await addActivity(groupId, 'group_updated', `Currency changed to ${data.currency}`);
     }
+};
+
+export const renameMemberService = async (groupId: string, oldName: string, newName: string) => {
+    const groupDoc = await getDoc(doc(db, GROUPS_COLLECTION, groupId));
+    if (!groupDoc.exists()) return;
+
+    const data = groupDoc.data() as Group;
+    const members = data.members.map(m => m === oldName ? newName : m);
+    
+    // Cascading update for expenses
+    const expenses = data.expenses.map(exp => {
+        const updatedExp = { ...exp };
+        if (exp.paidBy === oldName) updatedExp.paidBy = newName;
+        if (exp.splitAmong.includes(oldName)) {
+            updatedExp.splitAmong = exp.splitAmong.map(m => m === oldName ? newName : m);
+        }
+        if (exp.settledWith === oldName) updatedExp.settledWith = newName;
+        
+        // Handle custom splits if any
+        if (exp.splitDetails && exp.splitDetails[oldName] !== undefined) {
+            const newSplitDetails = { ...exp.splitDetails };
+            newSplitDetails[newName] = newSplitDetails[oldName];
+            delete newSplitDetails[oldName];
+            updatedExp.splitDetails = newSplitDetails;
+        }
+        
+        return updatedExp;
+    });
+
+    // Update UPI mapping if it exists
+    const memberUpiIds = { ...(data.memberUpiIds || {}) };
+    if (memberUpiIds[oldName]) {
+        memberUpiIds[newName] = memberUpiIds[oldName];
+        delete memberUpiIds[oldName];
+    }
+
+    await updateDoc(doc(db, GROUPS_COLLECTION, groupId), {
+        members,
+        expenses,
+        memberUpiIds
+    });
+
+    await addActivity(groupId, 'group_updated', `Member "${oldName}" renamed to "${newName}"`);
+    await notifyGroup(groupId, 'Member Renamed', `"${oldName}" is now known as "${newName}"`, 'group');
 };
 
 export const getGroupByShareCode = async (code: string, userId?: string) => {

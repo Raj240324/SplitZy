@@ -16,6 +16,7 @@ import {
     deleteExpenseService,
     addMemberService,
     removeMemberService,
+    renameMemberService,
     getGroupByShareCode
 } from '@/services/group.service';
 
@@ -159,6 +160,16 @@ export const useGroup = (groupId: string) => {
       }
   };
 
+  const renameMember = async (oldName: string, newName: string) => {
+    if (!group) return;
+    try {
+      await renameMemberService(group.id, oldName, newName);
+      toast({ title: 'Member renamed' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to rename member', variant: 'destructive' });
+    }
+  };
+
   return {
     group,
     isLoading,
@@ -168,7 +179,8 @@ export const useGroup = (groupId: string) => {
     recordSettlement,
     updateGroup,
     addMember,
-    removeMember
+    removeMember,
+    renameMember
   };
 };
 

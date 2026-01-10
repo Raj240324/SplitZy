@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Plus, CheckCircle, Trash2, X, Share2, Download, Printer, Settings, Smartphone, Check } from 'lucide-react';
+import { ChevronRight, Plus, CheckCircle, Trash2, X, Share2, Download, Printer, Settings, Smartphone, Check, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,8 @@ import { Header } from '@/components/Header';
 import SettleUpModal from '@/components/SettleUpModal';
 import Statistics from '@/components/Statistics';
 import ActivityFeed from '@/components/ActivityFeed';
+import EditGroupModal from '@/components/EditGroupModal';
+import EditMemberModal from '@/components/EditMemberModal';
 import { useToast } from '@/hooks/use-toast';
 import { exportToCSV, getCurrencySymbol } from '@/utils/export';
 import { useGroup, useGroups } from '@/hooks/use-firestore';
@@ -75,6 +77,10 @@ const GroupDetail = () => {
   // Settings state
   const [editedName, setEditedName] = useState('');
   const [newMemberName, setNewMemberName] = useState('');
+  
+  // Modal states
+  const [showEditGroup, setShowEditGroup] = useState(false);
+  const [editingMember, setEditingMember] = useState<string | null>(null);
   
   // Scan Bill state
   const [showScanBill, setShowScanBill] = useState(false);
@@ -250,7 +256,17 @@ const GroupDetail = () => {
           <div className="flex flex-col gap-6 mb-8">
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <h1 className="text-fluid-2xl font-black tracking-tight">{group.name}</h1>
+                <div className="flex items-center gap-2 group/title">
+                  <h1 className="text-fluid-2xl font-black tracking-tight">{group.name}</h1>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 rounded-full opacity-0 group-hover/title:opacity-100 transition-opacity"
+                    onClick={() => setShowEditGroup(true)}
+                  >
+                    <Pencil className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                </div>
                 <div className="flex items-center gap-1.5 opacity-80">
                   {group.members.slice(0, 3).map(member => (
                     <MemberAvatar key={member} name={member} size="xs" className="-ml-1.5 first:ml-0 ring-2 ring-background border-none" />
@@ -485,10 +501,20 @@ const GroupDetail = () => {
                         >
                           <div className="flex items-center gap-3">
                             <MemberAvatar name={member} size="sm" />
-                            <span className="font-bold text-sm">{member}</span>
-                            {member === 'You' && (
-                              <span className="text-fluid-xs font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded-full">Owner</span>
-                            )}
+                            <div className="flex flex-col">
+                              <span className="font-bold text-sm">{member}</span>
+                              {member === 'You' && (
+                                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Owner</span>
+                              )}
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => setEditingMember(member)}
+                            >
+                              <Pencil className="h-3 w-3 text-muted-foreground" />
+                            </Button>
                           </div>
                           {member !== 'You' && (
                             <Button
@@ -594,6 +620,23 @@ const GroupDetail = () => {
               handleSettlement(activePayment, { method, status: 'pending' });
               setActivePayment(null);
             }}
+          />
+        )}
+
+        <EditGroupModal
+          open={showEditGroup}
+          onClose={() => setShowEditGroup(false)}
+          group={group}
+          onUpdate={updateGroup}
+        />
+
+        {editingMember && (
+          <EditMemberModal
+            open={!!editingMember}
+            onClose={() => setEditingMember(null)}
+            memberName={editingMember}
+            onUpdate={(newName) => renameMember(editingMember, newName)}
+            existingMembers={group.members}
           />
         )}
       </div>
