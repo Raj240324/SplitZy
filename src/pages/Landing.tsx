@@ -59,11 +59,11 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="relative min-h-[100dvh] md:min-h-screen flex items-center overflow-hidden bg-slate-950 text-white transition-colors duration-500 selection:bg-primary/30">
         <Header />
-        {/* Animated Background Blobs */}
+        {/* Animated Background Blobs - Optimized with will-change and reduced blur and transparency */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] animate-blob" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] animate-blob animation-delay-2000" />
-          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/10 rounded-full blur-[100px] animate-blob animation-delay-4000" />
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/15 rounded-full blur-[100px] animate-blob will-change-transform" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[100px] animate-blob animation-delay-2000 will-change-transform" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/5 rounded-full blur-[80px] animate-blob animation-delay-4000 will-change-transform" />
         </div>
 
         <div className="container mx-auto px-6 md:px-12 py-12 md:py-20 relative z-10">

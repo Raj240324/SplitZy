@@ -46,6 +46,8 @@ export const Logo = ({ className, size = "md", showTagline = false }: LogoProps)
           alt="SplitZy Logo" 
           width="48" 
           height="48" 
+          decoding="async"
+          {...(size === 'lg' || size === 'xl' ? { fetchpriority: 'high' } : {})}
           className={cn(currentSize.img, "object-contain relative transition-transform group-hover/logo:rotate-12")} 
         />
       </div>

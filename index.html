@@ -3,26 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SplitZy - SPLIT BILLS NOT FRIENDSHIPS</title>
+    <title>SplitZy - Split Bills Not Friendships</title>
     <meta
       name="description"
-      content="The simplest way to split bills with friends, roommates, and groups. SPLIT BILLS NOT FRIENDSHIPS."
+      content="Split bills, not friendships. The simplest, most aesthetic way to split expenses with friends, roommates, and groups. No Cap, just vibes."
     />
-    <meta name="author" content="SplitZy" />
+    <meta name="author" content="nagadev" />
+    
+    <!-- Critical Preconnects -->
+    <link rel="preconnect" href="https://img.clerk.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Font Strategy: Swap for instant text display -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
+      media="print" 
+      onload="this.media='all'"
     />
-    <meta name="theme-color" content="#4f46e5" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <meta name="theme-color" content="#8b5cf6" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SplitZy" />
+    
     <link rel="icon" type="image/png" href="/Split-Zy.png" />
     <link rel="apple-touch-icon" href="/Split-Zy.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="canonical" href="https://splitzy.app" />
+    
+    <!-- LCP Optimization: Preload hero logo with high priority -->
     <link rel="preload" as="image" href="/Split-Zy.png" fetchpriority="high" />
 
     <meta property="og:title" content="SplitZy - SPLIT BILLS NOT FRIENDSHIPS" />

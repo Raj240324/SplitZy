@@ -43,6 +43,7 @@ import { useUser } from '@clerk/clerk-react';
 import { SettlementCard } from '@/components/payment/SettlementCard';
 import { getUserProfile } from '@/services/user.service';
 import { PaymentModal } from '@/components/payment/PaymentModal';
+import { LoadingAnimation } from '@/components/LoadingAnimation';
 
 const GroupDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -219,8 +220,11 @@ const GroupDetail = () => {
 
   if (isLoading || !group) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="min-h-screen bg-background flex flex-col pt-24">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingAnimation />
+        </div>
       </div>
     );
   }

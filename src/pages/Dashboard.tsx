@@ -13,6 +13,7 @@ import { getCurrencySymbol } from '@/utils/export';
 import { Header } from '@/components/Header';
 import SwipeableGroupCard from '@/components/SwipeableGroupCard';
 import { useGroups } from '@/hooks/use-firestore';
+import { LoadingAnimation } from '@/components/LoadingAnimation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const userId = user?.id;
 
   const [groups, setGroups] = useState<Group[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(!!inviteCode);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,11 +52,17 @@ const Dashboard = () => {
   const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
-  if (!userId) return;
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
 
-  const unsub = listenGroups(userId, setGroups);
-  return () => unsub();
-}, [userId]);
+    const unsub = listenGroups(userId, (data) => {
+      setGroups(data);
+      setIsLoading(false);
+    });
+    return () => unsub();
+  }, [userId]);
 
 
   const getBalanceStatus = (group: Group, currentUser: string = 'You') => {
@@ -76,6 +84,17 @@ const Dashboard = () => {
   const filteredGroups = groups.filter(g => 
     g.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background pt-24 pb-12">
+        <Header />
+        <div className="container mx-auto max-w-6xl px-4 h-[60vh] flex items-center justify-center">
+          <LoadingAnimation />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-12">

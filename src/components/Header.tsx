@@ -35,6 +35,7 @@ export const Header = () => {
               size="icon" 
               onClick={() => navigate(-1)} 
               className="rounded-full h-8 w-8 sm:h-9 sm:w-9 -ml-1 sm:-ml-2 text-muted-foreground hover:text-foreground"
+              aria-label="Go back"
             >
               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Button>
@@ -67,7 +68,7 @@ export const Header = () => {
               </Button>
             </SignedOut>
             <SignedIn>
-              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary transition-colors flex" asChild>
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/5 hover:text-primary transition-colors flex" asChild aria-label="Settings">
                 <NavLink to="/settings">
                   <SettingsIcon className="w-4 h-4 sm:w-5 h-5" />
                 </NavLink>

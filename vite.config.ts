@@ -71,14 +71,19 @@ export default defineConfig(({ mode }) => ({
     })
   ].filter(Boolean),
   build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    cssMinify: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('recharts')) return 'charts';
-            if (id.includes('lucide-react')) return 'icons';
-            if (id.includes('@radix-ui')) return 'radix';
-            if (id.includes('@clerk')) return 'auth';
+            if (id.includes('@clerk')) return 'vendor-auth';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('@radix-ui')) return 'vendor-ui';
+            if (id.includes('recharts')) return 'vendor-charts';
+            if (id.includes('firebase')) return 'vendor-db';
             return 'vendor';
           }
         }

@@ -1,0 +1,17 @@
+{
+  "name": "SplitZy - Split Bills Not Friendships",
+  "short_name": "SplitZy",
+  "description": "The simplest way to split bills with friends and roommates.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "/Split-Zy.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
