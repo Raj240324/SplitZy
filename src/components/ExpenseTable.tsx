@@ -108,10 +108,14 @@ const ExpenseTable = ({ expenses, members, currentUser = 'You', onEdit, onDelete
 
   if (expenses.length === 0) {
     return (
-      <div className="text-center py-12 bg-card rounded-xl border border-border">
-        <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground">No expenses yet</p>
-        <p className="text-sm text-muted-foreground">Add your first expense to get started</p>
+      <div className="text-center py-16 px-4 bg-card/50 backdrop-blur-sm rounded-3xl border border-dashed border-border/50 animate-in fade-in zoom-in duration-500 mt-4">
+        <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/10">
+          <Package className="w-8 h-8 text-primary/40" />
+        </div>
+        <p className="font-black text-base tracking-tight mb-2">Clean Slate!</p>
+        <p className="text-xs text-muted-foreground max-w-[240px] mx-auto leading-relaxed">
+          No expenses recorded yet. Tap <span className="text-primary font-bold">Add Expense</span> or <span className="text-primary font-bold">Scan Bill</span> to start the vibez.
+        </p>
       </div>
     );
   }
